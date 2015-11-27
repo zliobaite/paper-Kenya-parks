@@ -1,0 +1,14 @@
+,Aepyceros melampus,Alcelaphus buselaphus,Beatragus hunteri,Cephalophus adersi,Cephalophus harveyi,Cephalophus nigrifrons,Cephalophus silvicultor,Cephalophus weynsi,Connochaetes taurinus,Damaliscus korrigum,Eudorcas thomsonii,Hippotragus equinus,Hippotragus niger,Kobus ellipsiprymnus,Litocranius walleri,Madoqua guentheri,Madoqua kirkii,Nanger granti,Neotragus moschatus,Oreotragus oreotragus,Oryx beisa,Ourebia ourebi,Philantomba monticola,Raphicerus campestris,Redunca fulvorufula,Redunca redunca,Sylvicapra grimmia,Syncerus caffer,Taurotragus oryx,Tragelaphus eurycerus,Tragelaphus imberbis,Tragelaphus scriptus,Tragelaphus spekii,Tragelaphus strepsiceros,Giraffa camelopardalis,Hippopotamus amphibius,Hylochoerus meinertzhageni,Phacochoerus aethiopicus,Phacochoerus africanus,Potamochoerus larvatus,Equus burchellii,Equus grevyi,Diceros bicornis,Ceratotherium simum,Cercocebus galeritus,Cercopithecus ascanius,Cercopithecus mitis,Cercopithecus neglectus,Chlorocebus pygerythrus,Chlorocebus tantalus,Colobus angolensis,Colobus guereza,Erythrocebus patas,Papio anubis,Papio cynocephalus,Piliocolobus rufomitratus,Galago gallarum,Galago senegalensis,Galago zanzibaricus,Otolemur crassicaudatus,Otolemur garnettii,Perodicticus potto,Loxodonta africana
+ABD,1,0,0,0,1,1,0,0,0,0,0,0,0,1,0,0,0,1,1,1,0,0,1,0,0,0,1,1,1,1,0,1,0,0,0,1,1,0,1,0,1,0,1,0,0,0,1,0,1,0,0,1,0,1,0,0,0,0,0,0,0,0,1
+EL,0,0,0,0,1,1,0,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1,0,0,0,1,0,0,0,0,1,0,0,1,0,1,0,0,0,1,0,0,0,0,0,1,1,1,0,0,1,0,1,0,0,0,1,0,0,0,1,0
+KK,0,0,0,0,1,0,1,1,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,0,1,1,0,0,0,1,0,1,1,0,0,0,0,0,1,1,1,1,0,0,1,0,1,0,0,0,1,0,1,0,1,0
+MM,1,1,0,0,0,0,0,0,1,1,1,1,0,1,0,0,1,1,0,1,1,1,1,1,0,1,1,1,1,0,0,1,0,1,1,1,1,0,1,1,1,0,1,0,0,0,1,0,1,0,0,1,1,1,0,0,0,1,0,1,0,0,1
+MR,1,1,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,0,1,1,1,1,0,1,1,1,1,0,1,1,0,1,1,1,1,1,1,1,1,1,1,1,0,0,1,0,1,0,0,1,1,1,0,0,1,1,0,1,0,0,1
+MKE,0,1,0,0,1,1,0,0,0,0,1,0,0,1,0,0,0,1,1,0,0,0,0,1,0,1,1,1,1,0,0,1,0,0,1,0,0,1,0,1,1,0,0,0,0,0,1,0,1,0,0,1,0,1,0,0,0,0,0,0,0,1,1
+NR,1,1,0,0,0,0,0,0,1,0,1,0,0,1,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,1,0,0,1,1,0,0,1,0,1,0,1,1,0,0,1,0,1,0,0,1,0,1,0,0,0,1,0,1,0,0,0
+NV,1,1,0,0,1,0,0,1,1,0,1,0,0,1,1,0,1,1,1,1,0,0,1,1,1,1,1,1,1,0,0,1,0,1,1,1,0,0,1,1,1,0,0,1,0,0,1,0,1,0,0,1,0,1,0,0,0,0,0,0,0,0,0
+SB,1,0,0,0,0,0,0,0,0,0,1,0,0,1,1,1,1,1,0,1,1,0,0,1,0,0,1,1,1,0,1,1,0,1,1,1,0,0,1,0,1,1,1,0,0,0,1,0,1,0,0,0,1,1,0,0,0,1,0,1,0,0,1
+SH,0,0,0,1,1,0,0,0,0,0,0,0,1,1,0,0,0,0,1,0,0,0,1,0,0,0,1,1,0,0,0,1,0,0,0,0,0,0,1,1,0,0,0,0,0,0,1,0,1,0,1,1,0,1,1,0,0,1,1,1,0,0,0
+SHP,1,1,0,0,0,0,0,0,1,1,1,0,0,1,1,0,1,1,0,1,1,1,0,1,0,1,1,1,1,0,1,1,0,1,1,0,0,0,1,0,1,0,1,0,0,0,1,0,1,0,0,1,0,1,0,0,0,0,0,0,0,0,1
+TN,0,0,1,1,1,0,0,0,0,1,0,0,0,1,1,1,1,1,1,0,1,0,1,1,0,0,0,1,1,0,1,1,0,0,1,1,1,1,1,1,1,1,1,0,1,0,1,0,1,0,0,0,0,1,1,1,1,1,1,1,0,0,1
+TV,1,1,1,0,1,0,0,0,0,0,1,0,0,1,1,0,1,1,0,1,1,0,0,1,0,1,1,1,1,0,1,1,0,1,1,1,0,0,1,1,1,1,1,0,0,0,1,0,1,0,0,0,0,1,1,0,0,1,1,1,1,0,1

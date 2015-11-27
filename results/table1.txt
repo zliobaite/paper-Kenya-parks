@@ -1,0 +1,14 @@
+Site	Site name	Area km2	Elev., m	Av. temp., C	Ann. precip., mm	NDVI	No. species
+ABD	Aberdares	1930	2712	11.9	1658	0.71	23
+EL	Elgon	733	2504	15	1598	0.68	17
+KK	Kakamega	540	1793	18.8	1773	0.75	20
+MM	Masaai Mara	1520	1601	19.5	1037	0.53	35
+MR	Meru	5090	421	25.6	429	0.37	38
+MKE	Mt Kenya	2600	2686	12.4	1596	0.63	23
+NR	Nairobi	66	1628	19	741	0.42	31
+NV	Naivasha	119	1974	16.7	711	0.46	31
+SB	Samburu	424	883	23.6	502	0.3	29
+SH	Shimba Hills	224	242	24.5	1103	0.62	20
+SHP	Shompole	183	1120	22.6	563	0.54	29
+TN	Tana	560	77	27.3	508	0.39	37
+TV	Tsavo	20210	544	24.5	714	0.34	35
