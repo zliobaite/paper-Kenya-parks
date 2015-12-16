@@ -1,0 +1,2 @@
+x
+1183 - 65 mean(CM) + 632 prop(SF=1) - 4907 prop(SF=2)

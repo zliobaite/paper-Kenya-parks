@@ -1,0 +1,7 @@
+	ABD	EL	KK	MM	MR	MKE	NR	NV	SB	SH	SHP	TN	TV
+Equus.burchellii	v	v	 	v	v	v	v	v	v	 	v	v	v
+Equus.grevyi	 	 	 	 	v	 	 	 	v	 	 	v	v
+Ceratotherium.simum	 	 	 	 	v	 	v	v	 	 	 	 	 
+Loxodonta.africana	v	 	 	v	v	v	 	 	v	 	v	v	v
+No. of species	23	17	20	35	38	23	31	31	29	20	29	37	35
+prop(SF=2)	0.087	0.059	0	0.057	0.105	0.087	0.065	0.065	0.103	0	0.069	0.081	0.086

@@ -17,25 +17,34 @@ output_file_predictions_t1_cv <- 'working_data/out_predictions_t1_cv.csv'
 output_file_predictions_t1_fit <- 'working_data/out_predictions_t1_fit.csv'
 output_file_predictions_t3_cv <- 'working_data/out_predictions_t3_cv.csv'
 output_file_predictions_t3_fit <- 'working_data/out_predictions_t3_fit.csv'
+output_file_predictions_t5_cv <- 'working_data/out_predictions_t5_cv.csv'
+output_file_predictions_t5_fit <- 'working_data/out_predictions_t5_fit.csv'
 output_file_models_lars <- 'working_data/out_models_lars.csv'
 #output_file_features <- 'working_data/out_feature_selection.csv'
 output_file_features_t1 <- 'working_data/out_feature_selection_t1.csv'
 output_file_features_t3 <- 'working_data/out_feature_selection_t3.csv'
+output_file_features_t5 <- 'working_data/out_feature_selection_t5.csv'
 #output_file_fet_coefficients <- 'working_data/out_feature_coefficients.csv'
 output_file_fet_coefficients_t1 <- 'working_data/out_feature_coefficients_t1.csv'
 output_file_fet_coefficients_t3 <- 'working_data/out_feature_coefficients_t3.csv'
+output_file_fet_coefficients_t5 <- 'working_data/out_feature_coefficients_t5.csv'
 output_model1 <- 'working_data/out_model1_fit.txt'
 output_model3 <- 'working_data/out_model3_fit.txt'
+output_model5 <- 'working_data/out_model5_fit.txt'
 
 input_file_features_t1 <- output_file_features_t1
 input_file_features_t3 <- output_file_features_t3
+input_file_features_t5 <- output_file_features_t5
 input_file_fet_coefficients_t1 <- output_file_fet_coefficients_t1
 input_file_fet_coefficients_t3 <- output_file_fet_coefficients_t3
+input_file_fet_coefficients_t5 <- output_file_fet_coefficients_t5
 
-output_file_table2 <- 'results/table4.txt'
-output_file_table3 <- 'results/table5.txt'
+output_file_table2 <- 'results/table6.txt'
+output_file_table3 <- 'results/table7.txt'
+output_file_table4 <- 'results/table8.txt'
 
 plot_name_fig2 <- 'results/figure2.pdf'
+plot_name_NPP <- 'results/figureNPP.pdf'
 
 R2_files <- c(output_file_R2_lars_fit,output_file_R2_pls_fit,output_file_R2_lars_cv,output_file_R2_pls_cv)
 
@@ -49,6 +58,9 @@ p <- dim(data_sites_all)[2]
 #0s removed due to linear dependence
 fet_inputs <- c('HYP','WCT_CS','WCT_AL','WCT_OL','WCT_CP','WCT_SF','WCT_CM',"HYP_2","HYP_3","WCT_CS_4","WCT_CS_5","WCT_CS_6",'WCT_CS_7',"WCT_AL_1","WCT_AL_2","WCT_OL_2","WCT_OL_3","WCT_OL_5","WCT_CP_1","WCT_CP_2","WCT_SF_1","WCT_SF_2",'MASS_log_mean')
 
+# without proportions
+#fet_inputs <- c('HYP','WCT_CS','WCT_AL','WCT_OL','WCT_CP','WCT_SF','WCT_CM','MASS_log_mean')
+
 do_figure_a1 <- FALSE #select TRUE for doing Figure A1 in Appendix A.2
 
 param_pls_method <- 'svdpc' #pca, works almost the same
@@ -58,7 +70,7 @@ param_pls_comps <- 10
 param_round_digits <- 3
 
 #for model reporting
-param_model_select_lars <- 6+1 #the first model is 0
+param_model_select_lars <- 10+1 #the first model is 0
 param_model_select_pls <- 1
 
 #for recording models for analysis of variable importance
@@ -68,6 +80,10 @@ dg1 <- 0
 param_target3 <- 'NDVI_MIN'
 param_select_t3 <- 10
 dg3 = 3 #digits for rounding
+param_target5 <- 'NPP_MIN'
+param_select_t5 <- 3
+dg5 = 0 #digits for rounding
+
 
 if (do_figure_a1){
   fet_inputs <- c('HYP','WCT_CS','WCT_AL','WCT_OL','WCT_CP','WCT_SF','WCT_CM','MASS_log_mean')
@@ -327,6 +343,23 @@ for (cik in 1:length(fet_targets))
     fet_coefs_t3 <- fet_coefs_lars
   }
   
+  if (target_now == param_target5){
+    mod <- coef(fit_lars, mode = 'step')
+    int <- predict.lars(fit_lars, data_sites[ind_test,fet_inputs]*0, type="fit")
+    model_now <- c(mod[param_select_t5+1,],int$fit[param_select_t5+1]) #+1 because 1st model 0
+    mnames <- names(model_now)[1:(length(model_now)-1)]
+    model_now <- as.vector(model_now)
+    md <- make_write_down_model(round(model_now,digits = dg5),mnames)
+    write.table(md,file = output_model5,quote = FALSE,row.names = FALSE,sep=',')
+    # predictions_lars_cv <- rbind(predictions_lars_cv,cbind(data_sites[ind_test,target_now],t(pp_lars$fit)))
+    predictions_t5_cv <- cbind(as.data.frame(round(predictions_lars_cv,digits = dg5)),data_sites_all[,c('SITE','LAT','LON')],round(compute_R2_matrix(predictions_lars_cv)[param_select_t5+1],digits = 3))
+    predictions_t5_fit <- cbind(as.data.frame(round(predictions_lars_fit,digits = dg5)),data_sites_all[,c('SITE','LAT','LON')],round(compute_R2_matrix(predictions_lars_fit)[param_select_t5+1],digits = 3))
+    colnames(predictions_t5_cv) <- c('true',rep('pr',(dim( predictions_t5_cv)[2]-5)),'SITE','LAT','LON','R2')
+    colnames(predictions_t5_fit) <- c('true',rep('pr',(dim( predictions_t5_fit)[2]-5)),'SITE','LAT','LON','R2')
+    fet_selection_t5 <- fet_selection_lars
+    fet_coefs_t5 <- fet_coefs_lars
+  }
+  
   #jacknife
   #jack = sqrt(apply((model_collection[1:13,] - matrix(1,13,1)%*%model_collection[14,])^2,2,sum)*(N-1)/N)
 }
@@ -345,6 +378,8 @@ write.table(predictions_t1_fit,file = output_file_predictions_t1_fit,quote = FAL
 write.table(predictions_t1_cv,file = output_file_predictions_t1_cv,quote = FALSE,row.names = FALSE,sep='\t')
 write.table(predictions_t3_fit,file = output_file_predictions_t3_fit,quote = FALSE,row.names = FALSE,sep='\t')
 write.table(predictions_t3_cv,file = output_file_predictions_t3_cv,quote = FALSE,row.names = FALSE,sep='\t')
+write.table(predictions_t5_fit,file = output_file_predictions_t5_fit,quote = FALSE,row.names = FALSE,sep='\t')
+write.table(predictions_t5_cv,file = output_file_predictions_t5_cv,quote = FALSE,row.names = FALSE,sep='\t')
 
 
 #write LARS models
@@ -354,6 +389,8 @@ write.table(fet_selection_t1,file = output_file_features_t1,quote = FALSE,row.na
 write.table(fet_coefs_t1,file = output_file_fet_coefficients_t1,quote = FALSE,row.names = FALSE,sep='\t')
 write.table(fet_selection_t3,file = output_file_features_t3,quote = FALSE,row.names = FALSE,sep='\t')
 write.table(fet_coefs_t3,file = output_file_fet_coefficients_t3,quote = FALSE,row.names = FALSE,sep='\t')
+write.table(fet_selection_t5,file = output_file_features_t5,quote = FALSE,row.names = FALSE,sep='\t')
+write.table(fet_coefs_t5,file = output_file_fet_coefficients_t5,quote = FALSE,row.names = FALSE,sep='\t')
 
 
 ############################################################################################
@@ -452,3 +489,36 @@ make_feature_table <- function(input_file_features,input_file_fet_coefficients,o
 
 make_feature_table(input_file_features_t1,input_file_fet_coefficients_t1,output_file_table2)
 make_feature_table(input_file_features_t3,input_file_fet_coefficients_t3,output_file_table3)
+make_feature_table(input_file_features_t5,input_file_fet_coefficients_t5,output_file_table4)
+
+#plot NPP
+
+pdf(plot_name_NPP,width = 6,height = 6)
+par(mfrow = c(2,2), mar= c(4, 4, 1, 1) + 0.2)
+plot(data_sites_all[,'WCT_SF_2'],data_sites_all[,'NPP_MIN'], main="(a) min. NPP",xlab = 'prop(SF=2)',ylab = 'NPP_MIN',xlim = c(-0.01,0.12),ylim=c(400,1800))
+text(data_sites_all[,'WCT_SF_2'],data_sites_all[,'NPP_MIN'],data_sites_all[,'SITE'],cex=0.7,pos=3,col='#d95319')
+reg1 <- lm(NPP_MIN~WCT_SF_2,data=data_sites_all)
+#abline(reg1,col='orange')
+cc <- cor(data_sites_all[,'WCT_SF_2'],data_sites_all[,'NPP_MIN'])
+legend("bottomleft", bty="n", legend=paste("cor=",round(cc,digits=2),'\n',"R2=",round(summary(reg1)$adj.r.squared, digits=2)),text.col='orange')
+##
+plot(data_sites_all[,'WCT_SF_2'],data_sites_all[,'NPP'], main="(b) NPP",xlab = 'prop(SF=2)',ylab = 'NPP',xlim = c(-0.01,0.12),ylim=c(600,2200))
+text(data_sites_all[,'WCT_SF_2'],data_sites_all[,'NPP'],data_sites_all[,'SITE'],cex=0.7,pos=3,col='#d95319')
+reg1 <- lm(NPP~WCT_SF_2,data=data_sites_all)
+cc <- cor(data_sites_all[,'WCT_SF_2'],data_sites_all[,'NPP'])
+legend("bottomleft", bty="n", legend=paste("cor=",round(cc,digits=2),'\n',"R2=",round(summary(reg1)$adj.r.squared, digits=2)),text.col='orange')
+##
+plot(data_sites_all[,'WCT_SF_2'],data_sites_all[,'PREC_MIN'], main="(c) min. PREC",xlab = 'prop(SF=2)',ylab = 'PREC_MIN',xlim = c(-0.01,0.12),ylim=c(300,1700))
+text(data_sites_all[,'WCT_SF_2'],data_sites_all[,'PREC_MIN'],data_sites_all[,'SITE'],cex=0.7,pos=3,col='#d95319')
+reg1 <- lm(PREC_MIN~WCT_SF_2,data=data_sites_all)
+#abline(reg1,col='orange')
+cc <- cor(data_sites_all[,'WCT_SF_2'],data_sites_all[,'PREC_MIN'])
+legend("bottomleft", bty="n", legend=paste("cor=",round(cc,digits=2),'\n',"R2=",round(summary(reg1)$adj.r.squared, digits=2)),text.col='orange')
+##
+plot(data_sites_all[,'WCT_SF_2'],data_sites_all[,'NDVI_MIN'], main="(d) min. NDVI",xlab = 'prop(SF=2)',ylab = 'NDVI_MIN',xlim = c(-0.01,0.12),ylim=c(0.1,0.7))
+text(data_sites_all[,'WCT_SF_2'],data_sites_all[,'NDVI_MIN'],data_sites_all[,'SITE'],cex=0.7,pos=3,col='#d95319')
+reg1 <- lm(NDVI_MIN~WCT_SF_2,data=data_sites_all)
+#abline(reg1,col='orange')
+cc <- cor(data_sites_all[,'WCT_SF_2'],data_sites_all[,'NDVI_MIN'])
+legend("bottomleft", bty="n", legend=paste("cor=",round(cc,digits=2),'\n',"R2=",round(summary(reg1)$adj.r.squared, digits=2)),text.col='orange')
+dev.off()

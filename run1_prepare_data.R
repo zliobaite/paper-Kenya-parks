@@ -7,6 +7,8 @@ input_file_climate <- 'input_data/data_climate.csv'
 
 output_file_data <- 'working_data/data_all.csv'
 output_file_table1 <- 'results/table1.txt'
+output_file_tableA1 <- 'results/tableA1.txt'
+output_file_tableSF2 <- 'results/tableSF2.txt'
 
 fet_extract <- c('HYP','WCT_CS','WCT_AL','WCT_OL','WCT_CP','WCT_SF','WCT_CM') #features to extract
 fet_mass <- 'MASS_KG' #feature for mass
@@ -90,7 +92,7 @@ NPPt <- 3000 / (1 + exp(1.315 - 0.119 * data_climate$TEMP))
 NPPp <- 3000 * (1 - exp(-0.000664*data_climate$PREC))
 NPP <- round(apply(cbind(NPPt,NPPp),1,min))
 
-NPPtmin <- 3000 / (1 + exp(1.315 - 0.119 * data_climate$TEMPmin))
+NPPtmin <- 3000 / (1 + exp(1.315 - 0.119 * data_climate$TEMP_MIN))
 NPPpmin <- 3000 * (1 - exp(-0.000664*data_climate$PREC_MIN))
 NPP_MIN <- round(apply(cbind(NPPtmin,NPPpmin),1,min))
 
@@ -108,12 +110,39 @@ write.table(data_all, file = output_file_data, quote = FALSE, row.names = FALSE,
 
 
 #make Table 1
-output_file_table1 <- 'results/table1.txt'
-pred_tab <- data_all[,c('SITE','SITE_name','AREA','ELEV','TEMP','PREC','NDVI','no_species_fact')]
+pred_tab <- data_all[,c('SITE','SITE_name','AREA','ELEV','TEMP','PREC','NPP','NDVI','no_species_fact')]
 pred_tab[,'AREA'] <- round(pred_tab[,'AREA'])
 pred_tab[,'ELEV'] <- round(pred_tab[,'ELEV'])
 pred_tab[,'TEMP'] <- round(pred_tab[,'TEMP'],digits = 1)
 pred_tab[,'PREC'] <- round(pred_tab[,'PREC'])
 pred_tab[,'NDVI'] <- round(pred_tab[,'NDVI'],digits = 2)
-colnames(pred_tab) <- c('Site','Site name','Area km2','Elev., m','Av. temp., C','Ann. precip., mm','NDVI','No. species')
+colnames(pred_tab) <- c('Site','Site name','Area km2','Elev., m','Av. temp., C','Ann. precip., mm','NPP, gC/m2year','NDVI','No. species')
 write.table(pred_tab,file = output_file_table1,quote = FALSE,row.names = FALSE,sep='\t')
+
+#make Table A1
+pred_tab <- data_all[,c('SITE','SITE_name','TEMP_MIN','PREC_MIN','NPP_MIN','NDVI_MIN')]
+pred_tab[,'TEMP_MIN'] <- round(pred_tab[,'TEMP_MIN'],digits = 1)
+pred_tab[,'PREC_MIN'] <- round(pred_tab[,'PREC_MIN'])
+pred_tab[,'NDVI_MIN'] <- round(pred_tab[,'NDVI_MIN'],digits = 2)
+colnames(pred_tab) <- c('Site','Site name','Min. temp., C','Min. precip., mm','Min. NPP, gC/m2year','Min. NDVI')
+write.table(pred_tab,file = output_file_tableA1,quote = FALSE,row.names = FALSE,sep='\t')
+
+#make Table SF=2
+ind_spec_SF2 <- which(data_traits[,'WCT_SF']==2)
+species_SF2 <- as.vector(data_traits[ind_spec_SF2,'TAXON'])
+species_SF2 <- gsub(" ",".",species_SF2)
+sp_parks <- as.vector(data_occurence[,1])
+sp_sum <- apply(data_occurence[,c(2:64)],1,sum)
+species_tab <- data_occurence[,species_SF2]
+sp_sum_SF_2 <- apply(species_tab,1,sum)
+sp_div <- round(sp_sum_SF_2/sp_sum,digits = 3)
+species_tab <- t(species_tab)
+species_tab <- rbind(species_tab,sp_sum,sp_div)
+colnames(species_tab) <- sp_parks
+species_tab <- cbind(rownames(species_tab),species_tab)
+species_tab[5,1] <- 'No. of species'
+species_tab[6,1] <- 'prop(SF=2)'
+species_tab[c(1:4),c(2:14)] <- gsub("0"," ",species_tab[c(1:4),c(2:14)])
+species_tab[c(1:4),c(2:14)] <- gsub("1","v",species_tab[c(1:4),c(2:14)])
+#species_tab[c(1:4),1] <- gsub("."," ",species_tab[c(1:4),1])
+write.table(species_tab,file = output_file_tableSF2,quote = FALSE,row.names = FALSE,sep='\t')
