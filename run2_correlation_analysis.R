@@ -68,7 +68,7 @@ process_feature_names <- function(Feature)
 colnames(cor_all)[1:29] <- process_feature_names(colnames(cor_all)[1:29])
 
 pdf(plot_name_fig1,width = 14)
-corrplot(as.matrix(cor_all),method="square",addCoef.col="black", addCoefasPercent = TRUE)
+corrplot(as.matrix(cor_all),method="square",addCoef.col="black", addCoefasPercent = TRUE,cl.pos = "n")
 dev.off()
 
 #correlations occurence
@@ -87,5 +87,5 @@ colnames(cor_all) <- fet_targets
 
 pdf(plot_name_figA2,width = 10,height = 25)
 #png(plot_name_cor,width = 100, res = 100)
-corrplot(as.matrix(cor_all),method="square",addCoef.col="black", addCoefasPercent = TRUE)
+corrplot(as.matrix(cor_all),method="square",addCoef.col="black", addCoefasPercent = TRUE,cl.pos = "n")
 dev.off()
