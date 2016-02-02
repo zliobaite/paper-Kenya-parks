@@ -90,8 +90,8 @@ if (do_figure_a1){
   plot_name_fig2 <- 'results/figureA1.pdf'
   param_steps <- 8 
   param_pls_comps <- 8
-  param_select_t1 <- 1
   param_select_t3 <- 8 
+  param_model_select_lars <- 1
 }
 
 ##############################################################
