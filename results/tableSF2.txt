@@ -1,7 +1,17 @@
 	ABD	EL	KK	MM	MR	MKE	NR	NV	SB	SH	SHP	TN	TV
-Equus.burchellii	v	v	 	v	v	v	v	v	v	 	v	v	v
-Equus.grevyi	 	 	 	 	v	 	 	 	v	 	 	v	v
-Ceratotherium.simum	 	 	 	 	v	 	v	v	 	 	 	 	 
-Loxodonta.africana	v	 	 	v	v	v	 	 	v	 	v	v	v
-No. of species	23	17	20	35	38	23	31	31	29	20	29	37	35
-prop(SF=2)	0.087	0.059	0	0.057	0.105	0.087	0.065	0.065	0.103	0	0.069	0.081	0.086
+Cephalophus.adersi	 	 	 	 	 	 	 	 	 	v	 	v	 
+Cephalophus.harveyi	v	v	v	 	 	v	 	v	 	v	 	v	v
+Cephalophus.nigrifrons	v	v	 	 	 	v	 	 	 	 	 	 	 
+Cephalophus.silvicultor	 	 	v	 	 	 	 	 	 	 	 	 	 
+No. of species	0	1	1	0	0	0	0	1	0	0	0	0	0
+prop(SF=2)	0	0	0	1	0	0	0	0	0	0	0	0	0
+Hippotragus.niger	0	0	0	0	0	0	0	0	0	1	0	0	0
+Kobus.ellipsiprymnus	1	1	0	1	1	1	1	1	1	1	1	1	1
+Oryx.beisa	0	0	0	1	1	0	1	0	1	0	1	1	1
+Redunca.fulvorufula	0	0	0	0	0	0	1	1	0	0	0	0	0
+Redunca.redunca	0	0	0	1	1	1	1	1	0	0	1	0	1
+Hippopotamus.amphibius	1	0	0	1	1	0	1	1	1	0	0	1	1
+Hylochoerus.meinertzhageni	1	1	1	1	1	0	0	0	0	0	0	1	0
+Potamochoerus.larvatus	0	0	1	1	1	1	0	1	0	1	0	1	1
+sp_sum	23	17	20	35	38	23	31	31	29	20	29	37	35
+sp_div	0.217	0.294	0.25	0.2	0.158	0.217	0.161	0.226	0.103	0.25	0.103	0.189	0.171

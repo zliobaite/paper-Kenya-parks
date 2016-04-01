@@ -10,7 +10,7 @@ output_file_table1 <- 'results/table1.txt'
 output_file_tableA1 <- 'results/tableA1.txt'
 output_file_tableSF2 <- 'results/tableSF2.txt'
 
-fet_extract <- c('HYP','WCT_CS','WCT_AL','WCT_OL','WCT_CP','WCT_SF','WCT_CM') #features to extract
+fet_extract <- c('HYP','HOR','AL','OL','SF','OT','CM') #features to extract
 fet_mass <- 'MASS_KG' #feature for mass
 
 
@@ -128,7 +128,7 @@ colnames(pred_tab) <- c('Site','Site name','Min. temp., C','Min. precip., mm','M
 write.table(pred_tab,file = output_file_tableA1,quote = FALSE,row.names = FALSE,sep='\t')
 
 #make Table SF=2
-ind_spec_SF2 <- which(data_traits[,'WCT_SF']==2)
+ind_spec_SF2 <- which(data_traits[,'SF']==1)
 species_SF2 <- as.vector(data_traits[ind_spec_SF2,'TAXON'])
 species_SF2 <- gsub(" ",".",species_SF2)
 sp_parks <- as.vector(data_occurence[,1])

@@ -1,2 +1,2 @@
 x
-0.255 + 0.459 mean(AL) + 0.595 prop(HYP=2) - 3.27 prop(CS=5) + 0.319 prop(CS=6) + 0.857 prop(OL=5) - 0.426 prop(CP=1)
+0.959 + 1.172 mean(AL) - 0.059 mean(OL) + 0.083 mean(SF) - 1.025 mean(CM) + 0.468 prop(HYP=2) - 0.734 prop(HOR=1)

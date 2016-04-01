@@ -1,2 +1,2 @@
 x
-249 - 80 mean(HYP) + 235 mean(CS) + 373 mean(AL) - 83 mean(OL) + 101 mean(CP) - 271 mean(SF) - 485 mean(CM) + 172 prop(HYP=2) - 129 prop(HYP=3) + 289 prop(CS=4) - 850 prop(CS=5) + 414 prop(CS=6) + 244 prop(CS=7) - 1050 prop(AL=1) + 765 prop(AL=2) - 185 prop(OL=2) - 260 prop(OL=3) - 980 prop(OL=5) - 239 prop(CP=1) + 366 prop(CP=2) + 158 prop(SF=1) - 678 prop(SF=2) - 39 mean(log(MASS))
+1533 - 119 mean(HYP) - 167 mean(HOR) + 491 mean(AL) - 249 mean(OL) + 475 mean(SF) - 526 mean(OT) - 604 mean(CM) + 273 prop(HYP=1) + 315 prop(HYP=2) - 198 prop(HYP=3) - 10 prop(HOR=1) + 915 prop(HOR=2) - 679 prop(HOR=3) - 54 mean(log(MASS))

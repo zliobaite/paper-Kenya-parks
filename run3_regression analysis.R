@@ -56,10 +56,7 @@ data_sites_all <- read.csv(input_file_name, header = TRUE)
 p <- dim(data_sites_all)[2]
 
 #0s removed due to linear dependence
-fet_inputs <- c('HYP','WCT_CS','WCT_AL','WCT_OL','WCT_CP','WCT_SF','WCT_CM',"HYP_2","HYP_3","WCT_CS_4","WCT_CS_5","WCT_CS_6",'WCT_CS_7',"WCT_AL_1","WCT_AL_2","WCT_OL_2","WCT_OL_3","WCT_OL_5","WCT_CP_1","WCT_CP_2","WCT_SF_1","WCT_SF_2",'MASS_log_mean')
-
-# without proportions
-#fet_inputs <- c('HYP','WCT_CS','WCT_AL','WCT_OL','WCT_CP','WCT_SF','WCT_CM','MASS_log_mean')
+fet_inputs <- c('HYP','HOR','AL','OL','SF','OT','CM','HYP_1',"HYP_2","HYP_3",'HOR_1',"HOR_2","HOR_3",'MASS_log_mean')
 
 do_figure_a1 <- FALSE #select TRUE for doing Figure A1 in Appendix A.2
 
@@ -86,7 +83,7 @@ dg5 = 0 #digits for rounding
 
 
 if (do_figure_a1){
-  fet_inputs <- c('HYP','WCT_CS','WCT_AL','WCT_OL','WCT_CP','WCT_SF','WCT_CM','MASS_log_mean')
+  fet_inputs <- c('HYP','HOR','AL','OL','SF','OT','CM','MASS_log_mean')
   plot_name_fig2 <- 'results/figureA1.pdf'
   param_steps <- 8 
   param_pls_comps <- 8
@@ -495,30 +492,30 @@ make_feature_table(input_file_features_t5,input_file_fet_coefficients_t5,output_
 
 pdf(plot_name_NPP,width = 6,height = 6)
 par(mfrow = c(2,2), mar= c(4, 4, 1, 1) + 0.2)
-plot(data_sites_all[,'WCT_SF_2'],data_sites_all[,'NPP_MIN'], main="(a) min. NPP",xlab = 'prop(SF=2)',ylab = 'NPP_MIN',xlim = c(-0.01,0.12),ylim=c(400,1800))
-text(data_sites_all[,'WCT_SF_2'],data_sites_all[,'NPP_MIN'],data_sites_all[,'SITE'],cex=0.7,pos=3,col='#d95319')
-reg1 <- lm(NPP_MIN~WCT_SF_2,data=data_sites_all)
+plot(data_sites_all[,'SF'],data_sites_all[,'NPP_MIN'], main="(a) min. NPP",xlab = 'prop(SF=1)',ylab = 'NPP_MIN',xlim = c(-0.01,0.12),ylim=c(400,1800))
+text(data_sites_all[,'SF'],data_sites_all[,'NPP_MIN'],data_sites_all[,'SITE'],cex=0.7,pos=3,col='#d95319')
+reg1 <- lm(NPP_MIN~SF,data=data_sites_all)
 #abline(reg1,col='orange')
-cc <- cor(data_sites_all[,'WCT_SF_2'],data_sites_all[,'NPP_MIN'])
+cc <- cor(data_sites_all[,'SF'],data_sites_all[,'NPP_MIN'])
 legend("bottomleft", bty="n", legend=paste("cor=",round(cc,digits=2),'\n',"R2=",round(summary(reg1)$adj.r.squared, digits=2)),text.col='orange')
 ##
-plot(data_sites_all[,'WCT_SF_2'],data_sites_all[,'NPP'], main="(b) NPP",xlab = 'prop(SF=2)',ylab = 'NPP',xlim = c(-0.01,0.12),ylim=c(600,2200))
-text(data_sites_all[,'WCT_SF_2'],data_sites_all[,'NPP'],data_sites_all[,'SITE'],cex=0.7,pos=3,col='#d95319')
-reg1 <- lm(NPP~WCT_SF_2,data=data_sites_all)
-cc <- cor(data_sites_all[,'WCT_SF_2'],data_sites_all[,'NPP'])
+plot(data_sites_all[,'SF'],data_sites_all[,'NPP'], main="(b) NPP",xlab = 'prop(SF=1)',ylab = 'NPP',xlim = c(-0.01,0.12),ylim=c(600,2200))
+text(data_sites_all[,'SF'],data_sites_all[,'NPP'],data_sites_all[,'SITE'],cex=0.7,pos=3,col='#d95319')
+reg1 <- lm(NPP~SF,data=data_sites_all)
+cc <- cor(data_sites_all[,'SF'],data_sites_all[,'NPP'])
 legend("bottomleft", bty="n", legend=paste("cor=",round(cc,digits=2),'\n',"R2=",round(summary(reg1)$adj.r.squared, digits=2)),text.col='orange')
 ##
-plot(data_sites_all[,'WCT_SF_2'],data_sites_all[,'PREC_MIN'], main="(c) min. PREC",xlab = 'prop(SF=2)',ylab = 'PREC_MIN',xlim = c(-0.01,0.12),ylim=c(300,1700))
-text(data_sites_all[,'WCT_SF_2'],data_sites_all[,'PREC_MIN'],data_sites_all[,'SITE'],cex=0.7,pos=3,col='#d95319')
-reg1 <- lm(PREC_MIN~WCT_SF_2,data=data_sites_all)
+plot(data_sites_all[,'SF'],data_sites_all[,'PREC_MIN'], main="(c) min. PREC",xlab = 'prop(SF=1)',ylab = 'PREC_MIN',xlim = c(-0.01,0.12),ylim=c(300,1700))
+text(data_sites_all[,'SF'],data_sites_all[,'PREC_MIN'],data_sites_all[,'SITE'],cex=0.7,pos=3,col='#d95319')
+reg1 <- lm(PREC_MIN~SF,data=data_sites_all)
 #abline(reg1,col='orange')
-cc <- cor(data_sites_all[,'WCT_SF_2'],data_sites_all[,'PREC_MIN'])
+cc <- cor(data_sites_all[,'SF'],data_sites_all[,'PREC_MIN'])
 legend("bottomleft", bty="n", legend=paste("cor=",round(cc,digits=2),'\n',"R2=",round(summary(reg1)$adj.r.squared, digits=2)),text.col='orange')
 ##
-plot(data_sites_all[,'WCT_SF_2'],data_sites_all[,'NDVI_MIN'], main="(d) min. NDVI",xlab = 'prop(SF=2)',ylab = 'NDVI_MIN',xlim = c(-0.01,0.12),ylim=c(0.1,0.7))
-text(data_sites_all[,'WCT_SF_2'],data_sites_all[,'NDVI_MIN'],data_sites_all[,'SITE'],cex=0.7,pos=3,col='#d95319')
-reg1 <- lm(NDVI_MIN~WCT_SF_2,data=data_sites_all)
+plot(data_sites_all[,'SF'],data_sites_all[,'NDVI_MIN'], main="(d) min. NDVI",xlab = 'prop(SF=1)',ylab = 'NDVI_MIN',xlim = c(-0.01,0.12),ylim=c(0.1,0.7))
+text(data_sites_all[,'SF'],data_sites_all[,'NDVI_MIN'],data_sites_all[,'SITE'],cex=0.7,pos=3,col='#d95319')
+reg1 <- lm(NDVI_MIN~SF,data=data_sites_all)
 #abline(reg1,col='orange')
-cc <- cor(data_sites_all[,'WCT_SF_2'],data_sites_all[,'NDVI_MIN'])
+cc <- cor(data_sites_all[,'SF'],data_sites_all[,'NDVI_MIN'])
 legend("bottomleft", bty="n", legend=paste("cor=",round(cc,digits=2),'\n',"R2=",round(summary(reg1)$adj.r.squared, digits=2)),text.col='orange')
 dev.off()
