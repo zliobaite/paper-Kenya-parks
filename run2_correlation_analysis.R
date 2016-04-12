@@ -11,7 +11,7 @@ plot_name_fig1 <- 'results/figure1.pdf'
 #plot_name_fig1_png <- 'results/figure1.png'
 plot_name_figA2 <- 'results/figureA2.pdf'
 
-fet_targets <- c('ELEV','TEMP','TEMP_MAX','TEMP_MIN','PREC','PREC_MIN','PREC_MAX','NPP','NPP_MIN','NDVI','NDVI_MIN')
+fet_targets <- c('ELEV','TEMP','TEMP_MAX','TEMP_MIN','TEMPmax','TEMPmin','TEMPmax_MAX','TEMPmin_MIN','PREC','PREC_MIN','PREC_MAX','PRECsp_MIN','PRECsp_MAX','NPP','NPP_MIN','NDVI','NDVI_MIN')
 
 fet_inputs <- c('HYP','HYP_1', 'HYP_2','HYP_3','HOR','HOR_1','HOR_2','HOR_3','AL','OL','SF','OT','CM','MASS_log_mean','no_species_fact','ELEV')
 
@@ -68,7 +68,7 @@ process_feature_names <- function(Feature)
 
 colnames(cor_all)[1:(length(fet_inputs)-2)] <- process_feature_names(colnames(cor_all)[1:(length(fet_inputs)-2)])
 
-pdf(plot_name_fig1,width = 8, height = 6)
+pdf(plot_name_fig1,width = 8, height = 7.5)
 #png(plot_name_fig1_png,width = 2400,height = 1000, res = 180)
 corrplot(as.matrix(cor_all),method="square",addCoef.col="black", addCoefasPercent = TRUE,cl.pos = "n")
 dev.off()

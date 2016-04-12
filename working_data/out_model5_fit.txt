@@ -1,2 +1,2 @@
 x
-1131 + 1918 mean(SF) - 3292 mean(CM) - 308 prop(HOR=3)
+43 - 22 mean(OL) - 53 mean(SF) + 11 mean(OT)

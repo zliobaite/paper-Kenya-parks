@@ -1,14 +1,14 @@
 Site	Site name	Min. temp., C	Min. precip., mm	Min. NPP, gC/m2year	Min. NDVI
-ABD	Aberdares	4.3	937	928	0.39
-EL	Elgon	8	1127	1231	0.3
-KK	Kakamega	9.9	1461	1397	0.56
-MM	Masaai Mara	11.6	899	1349	0.28
-MR	Meru	16.7	306	552	0.23
-MKE	Mt Kenya	4.8	807	967	0.27
-NR	Nairobi	11	635	1032	0.2
-NV	Naivasha	8.4	669	1076	0.26
-SB	Samburu	14.6	432	748	0.18
-SH	Shimba Hills	18.3	1003	1459	0.43
-SHP	Shompole	14.5	474	810	0.34
-TN	Tana	19.9	451	776	0.24
-TV	Tsavo	17.1	504	853	0.2
+ABD	Aberdares	10.4	700	1022	0.39
+EL	Elgon	14	491	1257	0.3
+KK	Kakamega	17.7	751	1469	0.56
+MM	Masaai Mara	18.2	334	1349	0.28
+MR	Meru	23.8	4	552	0.23
+MKE	Mt Kenya	11.1	596	1054	0.27
+NR	Nairobi	16.7	127	1032	0.2
+NV	Naivasha	14.8	273	1076	0.26
+SB	Samburu	22.6	47	748	0.18
+SH	Shimba Hills	22.3	251	1459	0.43
+SHP	Shompole	20.5	71	810	0.34
+TN	Tana	25.2	153	776	0.24
+TV	Tsavo	22.1	133	853	0.2

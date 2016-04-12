@@ -92,18 +92,12 @@ NPPt <- 3000 / (1 + exp(1.315 - 0.119 * data_climate$TEMP))
 NPPp <- 3000 * (1 - exp(-0.000664*data_climate$PREC))
 NPP <- round(apply(cbind(NPPt,NPPp),1,min))
 
-NPPtmin <- 3000 / (1 + exp(1.315 - 0.119 * data_climate$TEMP_MIN))
-NPPpmin <- 3000 * (1 - exp(-0.000664*data_climate$PREC_MIN))
+NPPtmin <- 3000 / (1 + exp(1.315 - 0.119 * data_climate$TEMPmin))
+NPPpmin <- 3000 * (1 - exp(-0.000664*data_climate$PRECsp_MIN))
 NPP_MIN <- round(apply(cbind(NPPtmin,NPPpmin),1,min))
 
 data_all <- cbind(data_all,NPP,NPP_MIN)
 
-
-#compute river indices
-den_perm_riv <- round(data_all[,'len_perm_riv']/data_all[,'AREA'], digits = 1)
-den_temp_riv <- round(data_all[,'len_temp_riv']/data_all[,'AREA'],digits = 1)
-den_riv <- round((data_all[,'len_perm_riv']+data_all[,'len_temp_riv'])/data_all[,'AREA'],digits = 1)
-data_all <- cbind(data_all,den_perm_riv,den_temp_riv,den_riv)
 
 #write file
 write.table(data_all, file = output_file_data, quote = FALSE, row.names = FALSE,col.names = TRUE,sep=',')

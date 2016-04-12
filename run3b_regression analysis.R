@@ -49,11 +49,8 @@ plot_name_NPP <- 'results/figureNPP.pdf'
 R2_files <- c(output_file_R2_lars_fit,output_file_R2_pls_fit,output_file_R2_lars_cv,output_file_R2_pls_cv)
 
 #fet_targets <- c('ELEV','TEMP','TEMP_MAX','TEMP_MIN','PREC','PREC_MIN','NPP','NPP_MIN','NDVI','NDVI_MIN')
-#fet_targets <- c('PREC','PREC_MIN','NPP','NPP_MIN','NDVI','NDVI_MIN')
-fet_targets <- c('ELEV','TEMP','TEMP_MAX','TEMP_MIN', 'TEMPmax_MAX','TEMPmin_MIN','TEMPmax','TEMPmin')
-# TEMP2 is the most extreme (min of min)
-# TEMP is mean of min
-# TEMP3 is min of mean
+fet_targets <- c('PREC','PREC_MIN','PREC_MAX','PRECsp_MIN','PRECsp_MAX','NPP','NPP_MIN','NDVI','NDVI_MIN')
+#fet_targets <- c('ELEV','TEMP','TEMP_MAX','TEMP_MIN', 'TEMPmax_MAX','TEMPmin_MIN','TEMPmax','TEMPmin')
 
 data_sites_all <- read.csv(input_file_name, header = TRUE)
 #print('removing elevation')
@@ -78,13 +75,13 @@ param_model_select_lars <- 10+1 #the first model is 0
 param_model_select_pls <- 1
 
 #for recording models for analysis of variable importance
-param_target1 <- 'TEMP_MAX'
+param_target1 <- 'PREC'
 param_select_t1 <- 1 #which model
 dg1 <- 0
-param_target3 <- 'TEMPmax_MAX'
-param_select_t3 <- 5
+param_target3 <- 'NDVI'
+param_select_t3 <- 10
 dg3 = 3 #digits for rounding
-param_target5 <- 'TEMP'
+param_target5 <- 'NPP'
 param_select_t5 <- 3
 dg5 = 0 #digits for rounding
 
