@@ -1,2 +1,2 @@
 x
-43 - 22 mean(OL) - 53 mean(SF) + 11 mean(OT)
+15 - 2 mean(SF) - 3 mean(CM)

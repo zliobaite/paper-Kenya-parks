@@ -2,42 +2,25 @@
 # model elev, precip and temp targets
 
 library(lars)
-library(pls)
 
 #Net primary productivity (NPP) is computed from temperature and precipitation using the classic formula from Leith (1972), as cited in Liu et al (2012). 
 
 #read
-input_file_name <- 'working_data/data_all.csv'
+input_file_name <- 'working_data/data_hyp4.csv'
 
-output_file_R2_pls_fit <- 'working_data/out_R2_pls_fit.csv'
-output_file_R2_pls_cv <- 'working_data/out_R2_pls_cv.csv'
 output_file_R2_lars_fit <- 'working_data/out_R2_lars_fit.csv'
 output_file_R2_lars_cv <- 'working_data/out_R2_lars_cv.csv'
 output_file_predictions_t1_cv <- 'working_data/out_predictions_t1_cv.csv'
 output_file_predictions_t1_fit <- 'working_data/out_predictions_t1_fit.csv'
-output_file_predictions_t3_cv <- 'working_data/out_predictions_t3_cv.csv'
-output_file_predictions_t3_fit <- 'working_data/out_predictions_t3_fit.csv'
-output_file_predictions_t5_cv <- 'working_data/out_predictions_t5_cv.csv'
-output_file_predictions_t5_fit <- 'working_data/out_predictions_t5_fit.csv'
 output_file_models_lars <- 'working_data/out_models_lars.csv'
-#output_file_features <- 'working_data/out_feature_selection.csv'
 output_file_features_t1 <- 'working_data/out_feature_selection_t1.csv'
-output_file_features_t3 <- 'working_data/out_feature_selection_t3.csv'
-output_file_features_t5 <- 'working_data/out_feature_selection_t5.csv'
 #output_file_fet_coefficients <- 'working_data/out_feature_coefficients.csv'
 output_file_fet_coefficients_t1 <- 'working_data/out_feature_coefficients_t1.csv'
-output_file_fet_coefficients_t3 <- 'working_data/out_feature_coefficients_t3.csv'
-output_file_fet_coefficients_t5 <- 'working_data/out_feature_coefficients_t5.csv'
 output_model1 <- 'working_data/out_model1_fit.txt'
-output_model3 <- 'working_data/out_model3_fit.txt'
-output_model5 <- 'working_data/out_model5_fit.txt'
+
 
 input_file_features_t1 <- output_file_features_t1
-input_file_features_t3 <- output_file_features_t3
-input_file_features_t5 <- output_file_features_t5
 input_file_fet_coefficients_t1 <- output_file_fet_coefficients_t1
-input_file_fet_coefficients_t3 <- output_file_fet_coefficients_t3
-input_file_fet_coefficients_t5 <- output_file_fet_coefficients_t5
 
 output_file_table2 <- 'results/table6.txt'
 output_file_table3 <- 'results/table7.txt'
@@ -46,57 +29,33 @@ output_file_table4 <- 'results/table8.txt'
 plot_name_fig2 <- 'results/figure2.pdf'
 plot_name_NPP <- 'results/figureNPP.pdf'
 
-R2_files <- c(output_file_R2_lars_fit,output_file_R2_pls_fit,output_file_R2_lars_cv,output_file_R2_pls_cv)
+R2_files <- c(output_file_R2_lars_fit,output_file_R2_lars_cv)
 
-#fet_targets <- c('ELEV','TEMP','TEMP_MAX','TEMP_MIN','PREC','PREC_MIN','NPP','NPP_MIN','NDVI','NDVI_MIN')
-#fet_targets <- c('PREC','PREC_MIN','NPP','NPP_MIN','NDVI','NDVI_MIN')
-fet_targets <- c('ELEV','TEMP','TEMP_MAX','TEMP_MIN', 'TEMPmax_MAX','TEMPmin_MIN','TEMPmax','TEMPmin')
+#fet_targets <- c('PREC','PREC_MIN','PREC_MAX','PRECsp_MIN','PRECsp_MAX','NPP','NPP_MIN','NDVI','NDVI_MIN')
+
+fet_targets <- c('no_species_fact','ELEV','TEMP','TEMP_MAX','TEMP_MIN', 'TEMPmax_MAX','TEMPmin_MIN','TEMPmax','TEMPmin')
 # TEMP2 is the most extreme (min of min)
 # TEMP is mean of min
 # TEMP3 is min of mean
 
 data_sites_all <- read.csv(input_file_name, header = TRUE)
-#print('removing elevation')
-#data_sites_all[,fet_targets] <- data_sites_all[,fet_targets] - data_sites_all[,'ELEV']
 p <- dim(data_sites_all)[2]
 
 #0s removed due to linear dependence
 fet_inputs <- c('HYP','HOR','AL','OL','SF','OT','CM','HYP_1',"HYP_2","HYP_3",'HOR_1',"HOR_2","HOR_3",'MASS_log_mean')
-#fet_inputs <- c('HYP','HOR','AL','OL','SF','OT','CM','HYP_1',"HYP_2","HYP_3",'HOR_1',"HOR_2","HOR_3")
-#fet_inputs <- c('HYP','HOR','AL','OL','SF','OT','CM',"HYP_2","HYP_3","HOR_2","HOR_3",'MASS_log_mean')
+fet_inputs <- c('HYP','HOR','AL','OL','SF','CM','MASS_log_mean')
 
-do_figure_a1 <- FALSE #select TRUE for doing Figure A1 in Appendix A.2
-
-param_pls_method <- 'svdpc' #pca, works almost the same
-
-param_steps <- 10 #buvo13
-param_pls_comps <- 10
+param_steps <- 6 #buvo13
 param_round_digits <- 3
 
 #for model reporting
-param_model_select_lars <- 10+1 #the first model is 0
-param_model_select_pls <- 1
+param_model_select_lars <- 6+1 #the first model is 0
 
 #for recording models for analysis of variable importance
 param_target1 <- 'TEMP_MAX'
 param_select_t1 <- 1 #which model
 dg1 <- 0
-param_target3 <- 'TEMPmax_MAX'
-param_select_t3 <- 5
-dg3 = 3 #digits for rounding
-param_target5 <- 'TEMP'
-param_select_t5 <- 3
-dg5 = 0 #digits for rounding
 
-
-if (do_figure_a1){
-  fet_inputs <- c('HYP','HOR','AL','OL','SF','OT','CM','MASS_log_mean')
-  plot_name_fig2 <- 'results/figureA1.pdf'
-  param_steps <- 8 
-  param_pls_comps <- 8
-  param_select_t3 <- 8 
-  param_model_select_lars <- 1
-}
 
 ##############################################################
 #functions
@@ -113,6 +72,7 @@ compute_R2_matrix <- function(predictions_fun)
 compute_R2 <- function(true_fun,pred_fun)
 {
   R2 <- 1 - sum((true_fun - pred_fun)^2)/sum((true_fun - mean(true_fun))^2)
+  #R2 <-sqrt(sum((true_fun - pred_fun)^2)/length(true_fun))/15
   return(R2)
 }
 
@@ -160,30 +120,9 @@ convert_models <- function(coef_fun)
   return(coefficients_fun)
 }
 
-recover_coefficients <- function(fit_pls,comp,data_sites)
-{
-  model_now <- coef(fit_pls,ncomp = comp)
-  n <- length(model_now)
-  coefs <- model_now
-  data <-data_sites*0
-  data <- data[1,]
-  for (sk in 1:n)
-  {
-    fet_now <- rownames(model_now)[sk]
-    data1 <- data
-    data1[fet_now] <- 1
-    pred <- predict(fit_pls, newdata = data1)[,,comp] - predict(fit_pls, newdata = data)[,,comp]
-    model_now[sk] <- pred
-  }
-  model_now <- c(model_now,predict(fit_pls, newdata = data)[,,comp])
-  return(model_now)
-}
-
 process_feature_names <- function(Feature)
 {
   Feature <- gsub('MASS_log_mean','log(MASS)',Feature)
-  Feature <- gsub('WCT_', '', Feature)
-  Feature <- gsub('new', '', Feature)
   Feature <- gsub('_', '=', Feature)
   for (sk in 1:length(Feature))
   {
@@ -208,10 +147,9 @@ process_feature_names <- function(Feature)
 
 # manual cross validation
 N <- dim(data_sites_all)[1]
-all_R2_pls_cv <- c(1:param_pls_comps)
 all_R2_lars_cv <- c(0:param_steps)
-all_R2_pls_fit <- c(1:param_pls_comps)
 all_R2_lars_fit <- c(0:param_steps)
+all_R2_ols_cv <- c(0:param_steps)
 
 print('target now:')
 for (cik in 1:length(fet_targets))
@@ -224,11 +162,9 @@ for (cik in 1:length(fet_targets))
   
   predictions_lars_cv <- c()
   predictions_lars_fit <- c()
-  predictions_pls_cv <- c()
-  predictions_pls_fit <- c()
+  predictions_ols_cv <- c()
   
   model_collection_lars <- c()
-  model_collection_pls <- c()
   
   fet_selection_lars <- data_sites*0
   fet_coefs_lars <- data_sites*0
@@ -241,15 +177,18 @@ for (cik in 1:length(fet_targets))
     
     #fit models
     fit_lars <- lars(as.matrix(data_sites[ind_train,fet_inputs]),as.matrix(data_sites[ind_train,target_now]), normalize = TRUE,max.steps = param_steps)
-    fit_pls <- mvr(fml, param_pls_comps, method = param_pls_method, data = data_sites[ind_train,],scale = TRUE)
+    
+    fit_ols <- lm(as.formula(paste(target_now,'~.')), data=data_sites[ind_train,c(fet_inputs,target_now)])
+    fit_ols <- lm(as.formula(paste(target_now,'~ MASS_log_mean')), data=data_sites[ind_train,c(fet_inputs,target_now)])
+    #fit_ols <- lm(as.formula(paste(target_now,'~ no_species_fact')), data=data_sites[ind_train,c(fet_inputs,target_now)])
     
     #extract models (coefficients) plain regression
     model_lars <- coef(fit_lars, mode = 'step')
-    model_pls <- convert_models(fit_pls$coefficients)
+
     intercept_lars <- predict.lars(fit_lars, data_sites[ind_test,fet_inputs]*0, type="fit")
-    intercept_pls <- convert_models(predict(fit_pls, newdata = data_sites[1,]*0))
+  
     model_collection_lars <- rbind(model_collection_lars,c(model_lars[param_model_select_lars,],intercept_lars$fit[param_model_select_lars]))
-    model_collection_pls <- rbind(model_collection_pls,c(model_pls[param_model_select_pls,],intercept_pls[param_model_select_pls]))
+
     
     #selection order
     for (sk6 in 1:param_steps)
@@ -274,8 +213,7 @@ for (cik in 1:length(fet_targets))
     #predictions together with ground truth in the first column
     pp_lars <- predict.lars(fit_lars, data_sites[ind_test,fet_inputs], type="fit")
     predictions_lars_cv <- rbind(predictions_lars_cv,cbind(data_sites[ind_test,target_now],t(pp_lars$fit)))
-    pp_pls <- predict(fit_pls, newdata = data_sites[ind_test,])
-    predictions_pls_cv <- rbind(predictions_pls_cv,convert_predictions(data_sites[ind_test,target_now],pp_pls))
+    predictions_ols_cv <- rbind(predictions_ols_cv,cbind(data_sites[ind_test,target_now],predict(fit_ols,data_sites[ind_test,c(fet_inputs,target_now)])))
     
     #manual prediction (model lars)
     #sum(model[13,]*data_sites[ind_test,fet_inputs]) + intercept$fit[13])
@@ -284,106 +222,58 @@ for (cik in 1:length(fet_targets))
   }
   
   R2_lars_cv <- compute_R2_matrix(predictions_lars_cv)
-  R2_pls_cv <- compute_R2_matrix(predictions_pls_cv)
+  R2_ols_cv <- compute_R2_matrix(predictions_ols_cv)
   
-  all_R2_pls_cv <- cbind(all_R2_pls_cv,round(R2_pls_cv,digits = param_round_digits))
   all_R2_lars_cv <- cbind(all_R2_lars_cv,round(R2_lars_cv,digits = param_round_digits))
+  all_R2_ols_cv <- cbind(all_R2_ols_cv,round(R2_ols_cv,digits = param_round_digits))
   
   #full fit and add to models as the last row
   fit_lars <- lars(as.matrix(data_sites[,fet_inputs]),as.matrix(data_sites[,target_now]), normalize = TRUE,max.steps = param_steps)
-  fit_pls <- mvr(fml, param_pls_comps, method = param_pls_method, data = data_sites, scale = TRUE)
+ 
   model_lars <- coef(fit_lars, mode = 'step')
-  model_pls <- convert_models(fit_pls$coefficients)
+ 
   intercept_lars <- predict.lars(fit_lars, data_sites[ind_test,fet_inputs]*0, type="fit")
-  intercept_pls <- convert_models(predict(fit_pls, newdata = data_sites[1,]*0))
-  model_collection_lars <- rbind(model_collection_lars,c(model_lars[param_model_select_lars,],intercept_lars$fit[param_model_select_lars]))
-  model_collection_pls <- rbind(model_collection_pls,c(model_pls[param_model_select_pls,],intercept_pls[param_model_select_pls]))
   
+  model_collection_lars <- rbind(model_collection_lars,c(model_lars[param_model_select_lars,],intercept_lars$fit[param_model_select_lars]))
   
   #predictions all
   pp_lars <- predict.lars(fit_lars, data_sites[,fet_inputs], type="fit")
   predictions_lars_fit <- cbind(data_sites[,target_now],pp_lars$fit)
-  pp_pls <- predict(fit_pls, newdata = data_sites)
-  predictions_pls_fit <- convert_predictions(data_sites[,target_now],pp_pls)
   
   R2_lars_fit <- compute_R2_matrix(predictions_lars_fit)
-  R2_pls_fit <- compute_R2_matrix(predictions_pls_fit)
   
   all_R2_lars_fit <- cbind(all_R2_lars_fit,round(R2_lars_fit,digits = param_round_digits))
-  all_R2_pls_fit <- cbind(all_R2_pls_fit,round(R2_pls_fit,digits = param_round_digits))
   
-  if (target_now == param_target1)
-  {  
-    model_now <- recover_coefficients(fit_pls,param_select_t1,data_sites)
-    mnames <- rownames(coef(fit_pls,ncomp=param_select_t1))
-    md <- make_write_down_model(round(model_now,digits = dg1),mnames)
-    write.table(md,file = output_model1,quote = FALSE,row.names = FALSE,sep=',')
-    pp_pls <- predict(fit_pls, newdata = data_sites)
-    predictions_target1 <- convert_predictions(data_sites[,target_now],pp_pls)
-    #sum(model_now[1:18]*data_sites_all[1,names(model_now)[1:18]]) + model_now[19]
-    predictions_t1_cv <- cbind(as.data.frame(round(predictions_pls_cv,digits = dg1)),data_sites_all[,c('SITE','LAT','LON')],round(compute_R2_matrix(predictions_pls_cv)[param_select_t1],digits = 2))
-    R2vec <- rep(round(compute_R2_matrix(predictions_pls_fit)[param_select_t1],digits = 2),dim(data_sites_all)[1])
-    predictions_t1_fit <- cbind(as.data.frame(round(predictions_pls_fit,digits = dg1)),data_sites_all[,c('SITE','LAT','LON')],R2vec,data_sites_all[,'ELEV'])
-    colnames(predictions_t1_cv) <- c('true',rep('pr',(dim( predictions_t1_cv)[2]-5)),'SITE','LAT','LON','R2')
-    colnames(predictions_t1_fit) <- c('true',rep('pr',(dim( predictions_t1_fit)[2]-9)),'SITE','LAT','LON','R2','ELEV')
-    fet_selection_t1 <- fet_selection_lars
-    fet_coefs_t1 <- fet_coefs_lars
-  }
-  
-  if (target_now == param_target3){
+  if (target_now == param_target1){
     mod <- coef(fit_lars, mode = 'step')
     int <- predict.lars(fit_lars, data_sites[ind_test,fet_inputs]*0, type="fit")
     model_now <- c(mod[param_select_t3+1,],int$fit[param_select_t3+1]) #+1 because 1st model 0
     mnames <- names(model_now)[1:(length(model_now)-1)]
     model_now <- as.vector(model_now)
-    md <- make_write_down_model(round(model_now,digits = dg3),mnames)
+    md <- make_write_down_model(round(model_now,digits = dg1),mnames)
     write.table(md,file = output_model3,quote = FALSE,row.names = FALSE,sep=',')
     # predictions_lars_cv <- rbind(predictions_lars_cv,cbind(data_sites[ind_test,target_now],t(pp_lars$fit)))
-    predictions_t3_cv <- cbind(as.data.frame(round(predictions_lars_cv,digits = dg3)),data_sites_all[,c('SITE','LAT','LON')],round(compute_R2_matrix(predictions_lars_cv)[param_select_t3+1],digits = 3))
-    predictions_t3_fit <- cbind(as.data.frame(round(predictions_lars_fit,digits = dg3)),data_sites_all[,c('SITE','LAT','LON')],round(compute_R2_matrix(predictions_lars_fit)[param_select_t3+1],digits = 3))
-    colnames(predictions_t3_cv) <- c('true',rep('pr',(dim( predictions_t3_cv)[2]-5)),'SITE','LAT','LON','R2')
-    colnames(predictions_t3_fit) <- c('true',rep('pr',(dim( predictions_t3_fit)[2]-5)),'SITE','LAT','LON','R2')
-    fet_selection_t3 <- fet_selection_lars
-    fet_coefs_t3 <- fet_coefs_lars
-  }
-  
-  if (target_now == param_target5){
-    mod <- coef(fit_lars, mode = 'step')
-    int <- predict.lars(fit_lars, data_sites[ind_test,fet_inputs]*0, type="fit")
-    model_now <- c(mod[param_select_t5+1,],int$fit[param_select_t5+1]) #+1 because 1st model 0
-    mnames <- names(model_now)[1:(length(model_now)-1)]
-    model_now <- as.vector(model_now)
-    md <- make_write_down_model(round(model_now,digits = dg5),mnames)
-    write.table(md,file = output_model5,quote = FALSE,row.names = FALSE,sep=',')
-    # predictions_lars_cv <- rbind(predictions_lars_cv,cbind(data_sites[ind_test,target_now],t(pp_lars$fit)))
-    predictions_t5_cv <- cbind(as.data.frame(round(predictions_lars_cv,digits = dg5)),data_sites_all[,c('SITE','LAT','LON')],round(compute_R2_matrix(predictions_lars_cv)[param_select_t5+1],digits = 3))
-    predictions_t5_fit <- cbind(as.data.frame(round(predictions_lars_fit,digits = dg5)),data_sites_all[,c('SITE','LAT','LON')],round(compute_R2_matrix(predictions_lars_fit)[param_select_t5+1],digits = 3))
-    colnames(predictions_t5_cv) <- c('true',rep('pr',(dim( predictions_t5_cv)[2]-5)),'SITE','LAT','LON','R2')
-    colnames(predictions_t5_fit) <- c('true',rep('pr',(dim( predictions_t5_fit)[2]-5)),'SITE','LAT','LON','R2')
-    fet_selection_t5 <- fet_selection_lars
-    fet_coefs_t5 <- fet_coefs_lars
+    predictions_t1_cv <- cbind(as.data.frame(round(predictions_lars_cv,digits = dg1)),data_sites_all[,c('SITE','LAT','LON')],round(compute_R2_matrix(predictions_lars_cv)[param_select_t1+1],digits = 3))
+    predictions_t1_fit <- cbind(as.data.frame(round(predictions_lars_fit,digits = dg1)),data_sites_all[,c('SITE','LAT','LON')],round(compute_R2_matrix(predictions_lars_fit)[param_select_t1+1],digits = 3))
+    colnames(predictions_t1_cv) <- c('true',rep('pr',(dim( predictions_t1_cv)[2]-5)),'SITE','LAT','LON','R2')
+    colnames(predictions_t1_fit) <- c('true',rep('pr',(dim( predictions_t1_fit)[2]-5)),'SITE','LAT','LON','R2')
+    fet_selection_t1 <- fet_selection_lars
+    fet_coefs_t1 <- fet_coefs_lars
   }
   
   #jacknife
   #jack = sqrt(apply((model_collection[1:13,] - matrix(1,13,1)%*%model_collection[14,])^2,2,sum)*(N-1)/N)
 }
 
-colnames(all_R2_pls_cv) <- c('step',fet_targets)
-colnames(all_R2_pls_fit) <- c('step',fet_targets)
 colnames(all_R2_lars_cv) <- c('step',fet_targets)
 colnames(all_R2_lars_fit) <- c('step',fet_targets)
 
-write.table(all_R2_pls_cv,file = output_file_R2_pls_cv,quote = FALSE,row.names = FALSE,sep='\t')
-write.table(all_R2_pls_fit,file = output_file_R2_pls_fit,quote = FALSE,row.names = FALSE,sep='\t')
 write.table(all_R2_lars_cv,file = output_file_R2_lars_cv,quote = FALSE,row.names = FALSE,sep='\t')
 write.table(all_R2_lars_fit,file = output_file_R2_lars_fit,quote = FALSE,row.names = FALSE,sep='\t')
 
 write.table(predictions_t1_fit,file = output_file_predictions_t1_fit,quote = FALSE,row.names = FALSE,sep='\t')
 write.table(predictions_t1_cv,file = output_file_predictions_t1_cv,quote = FALSE,row.names = FALSE,sep='\t')
-write.table(predictions_t3_fit,file = output_file_predictions_t3_fit,quote = FALSE,row.names = FALSE,sep='\t')
-write.table(predictions_t3_cv,file = output_file_predictions_t3_cv,quote = FALSE,row.names = FALSE,sep='\t')
-write.table(predictions_t5_fit,file = output_file_predictions_t5_fit,quote = FALSE,row.names = FALSE,sep='\t')
-write.table(predictions_t5_cv,file = output_file_predictions_t5_cv,quote = FALSE,row.names = FALSE,sep='\t')
+
 
 
 #write LARS models
@@ -391,28 +281,24 @@ write.table(predictions_t5_cv,file = output_file_predictions_t5_cv,quote = FALSE
 #write feature selections
 write.table(fet_selection_t1,file = output_file_features_t1,quote = FALSE,row.names = FALSE,sep='\t')
 write.table(fet_coefs_t1,file = output_file_fet_coefficients_t1,quote = FALSE,row.names = FALSE,sep='\t')
-write.table(fet_selection_t3,file = output_file_features_t3,quote = FALSE,row.names = FALSE,sep='\t')
-write.table(fet_coefs_t3,file = output_file_fet_coefficients_t3,quote = FALSE,row.names = FALSE,sep='\t')
-write.table(fet_selection_t5,file = output_file_features_t5,quote = FALSE,row.names = FALSE,sep='\t')
-write.table(fet_coefs_t5,file = output_file_fet_coefficients_t5,quote = FALSE,row.names = FALSE,sep='\t')
 
 
 ############################################################################################
 #plotting 
 
-xlabels <- c(NA,NA,'selection step','components')
-ylabels <- c('R2',NA,'R2',NA)
-naive <- c(0,0,-0.174,-0.174)
-titles <- c('LARS fit (modeling)','PLS fit (modeling)','LARS CV (testing)','PLS CV (testing)')
+xlabels <- c('selection step','selection step')
+ylabels <- c('R2',NA)
+naive <- c(0,-0.174)
+titles <- c('LARS fit (modeling)','LARS CV (testing)')
 #parula
 mycolors <-c('#0072bd','#d95319','#edb120','#7e2f8e','#77ac30','#4dbeee','#a2142f','#808080','#000000')
 mylwd <- 2.2
 
 # figure 2
-pdf(plot_name_fig2,width = 6, height = 6)
+pdf(plot_name_fig2,width = 6, height = 3.15)
 #png(plot_name)
-par(mfrow = c(2,2), mar= c(4, 4, 1, 1) + 0.2) #matrix of subplots, mar is for margins
-for (plt in 1:4)
+par(mfrow = c(1,2), mar= c(4, 4, 1, 1) + 0.2) #matrix of subplots, mar is for margins
+for (plt in 1:2)
 {
   #read file
   R2 <- read.csv(R2_files[plt], header = TRUE, sep = '\t')
@@ -493,37 +379,3 @@ make_feature_table <- function(input_file_features,input_file_fet_coefficients,o
 }
 
 make_feature_table(input_file_features_t1,input_file_fet_coefficients_t1,output_file_table2)
-make_feature_table(input_file_features_t3,input_file_fet_coefficients_t3,output_file_table3)
-make_feature_table(input_file_features_t5,input_file_fet_coefficients_t5,output_file_table4)
-
-#plot NPP
-
-pdf(plot_name_NPP,width = 6,height = 6)
-par(mfrow = c(2,2), mar= c(4, 4, 1, 1) + 0.2)
-plot(data_sites_all[,'SF'],data_sites_all[,'NPP_MIN'], main="(a) min. NPP",xlab = 'prop(SF=1)',ylab = 'NPP_MIN',xlim = c(-0.01,0.12),ylim=c(400,1800))
-text(data_sites_all[,'SF'],data_sites_all[,'NPP_MIN'],data_sites_all[,'SITE'],cex=0.7,pos=3,col='#d95319')
-reg1 <- lm(NPP_MIN~SF,data=data_sites_all)
-#abline(reg1,col='orange')
-cc <- cor(data_sites_all[,'SF'],data_sites_all[,'NPP_MIN'])
-legend("bottomleft", bty="n", legend=paste("cor=",round(cc,digits=2),'\n',"R2=",round(summary(reg1)$adj.r.squared, digits=2)),text.col='orange')
-##
-plot(data_sites_all[,'SF'],data_sites_all[,'NPP'], main="(b) NPP",xlab = 'prop(SF=1)',ylab = 'NPP',xlim = c(-0.01,0.12),ylim=c(600,2200))
-text(data_sites_all[,'SF'],data_sites_all[,'NPP'],data_sites_all[,'SITE'],cex=0.7,pos=3,col='#d95319')
-reg1 <- lm(NPP~SF,data=data_sites_all)
-cc <- cor(data_sites_all[,'SF'],data_sites_all[,'NPP'])
-legend("bottomleft", bty="n", legend=paste("cor=",round(cc,digits=2),'\n',"R2=",round(summary(reg1)$adj.r.squared, digits=2)),text.col='orange')
-##
-plot(data_sites_all[,'SF'],data_sites_all[,'PREC_MIN'], main="(c) min. PREC",xlab = 'prop(SF=1)',ylab = 'PREC_MIN',xlim = c(-0.01,0.12),ylim=c(300,1700))
-text(data_sites_all[,'SF'],data_sites_all[,'PREC_MIN'],data_sites_all[,'SITE'],cex=0.7,pos=3,col='#d95319')
-reg1 <- lm(PREC_MIN~SF,data=data_sites_all)
-#abline(reg1,col='orange')
-cc <- cor(data_sites_all[,'SF'],data_sites_all[,'PREC_MIN'])
-legend("bottomleft", bty="n", legend=paste("cor=",round(cc,digits=2),'\n',"R2=",round(summary(reg1)$adj.r.squared, digits=2)),text.col='orange')
-##
-plot(data_sites_all[,'SF'],data_sites_all[,'NDVI_MIN'], main="(d) min. NDVI",xlab = 'prop(SF=1)',ylab = 'NDVI_MIN',xlim = c(-0.01,0.12),ylim=c(0.1,0.7))
-text(data_sites_all[,'SF'],data_sites_all[,'NDVI_MIN'],data_sites_all[,'SITE'],cex=0.7,pos=3,col='#d95319')
-reg1 <- lm(NDVI_MIN~SF,data=data_sites_all)
-#abline(reg1,col='orange')
-cc <- cor(data_sites_all[,'SF'],data_sites_all[,'NDVI_MIN'])
-legend("bottomleft", bty="n", legend=paste("cor=",round(cc,digits=2),'\n',"R2=",round(summary(reg1)$adj.r.squared, digits=2)),text.col='orange')
-dev.off()

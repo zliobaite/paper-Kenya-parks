@@ -1,2 +1,2 @@
 x
-53.736 - 10.262 mean(AL) - 18.266 mean(OL) - 63.235 mean(SF) + 1.562 mean(OT) + 0.839 prop(HYP=1)
+82 + 2 mean(HYP) - 19 mean(HOR) - 39 mean(OL) - 92 mean(SF) + 18 mean(CM)

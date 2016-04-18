@@ -1,2 +1,2 @@
 x
-20 + 1 mean(HOR) - 2 mean(AL) + 1 mean(OL) - 2 mean(SF) + 1 mean(OT) + 2 mean(CM) - 1 prop(HYP=1) - 1 prop(HYP=2) + 1 prop(HYP=3) - 3 prop(HOR=2) + 2 prop(HOR=3)
+19 + 1 mean(HOR) - 2 mean(AL) + 1 mean(OL) - 1 mean(SF) + 1 mean(OT) + 2 mean(CM) - 1 prop(HYP=1) - 1 prop(HYP=2) + 1 prop(HYP=3) - 3 prop(HOR=2) + 2 prop(HOR=3)
