@@ -31,9 +31,9 @@ plot_name_NPP <- 'results/figureNPP.pdf'
 
 R2_files <- c(output_file_R2_lars_fit,output_file_R2_lars_cv)
 
-#fet_targets <- c('PREC','PREC_MIN','PREC_MAX','PRECsp_MIN','PRECsp_MAX','NPP','NPP_MIN','NDVI','NDVI_MIN')
+fet_targets <- c('PREC','PREC_MIN','PREC_MAX','PRECsp_MIN','PRECsp_MAX','NPP','NPP_MIN','NDVI','NDVI_MIN')
 
-fet_targets <- c('no_species_fact','ELEV','TEMP','TEMP_MAX','TEMP_MIN', 'TEMPmax_MAX','TEMPmin_MIN','TEMPmax','TEMPmin')
+#fet_targets <- c('ELEV','TEMP','TEMP_MAX','TEMP_MIN', 'TEMPmax_MAX','TEMPmin_MIN','TEMPmax','TEMPmin')
 # TEMP2 is the most extreme (min of min)
 # TEMP is mean of min
 # TEMP3 is min of mean
@@ -42,8 +42,10 @@ data_sites_all <- read.csv(input_file_name, header = TRUE)
 p <- dim(data_sites_all)[2]
 
 #0s removed due to linear dependence
-fet_inputs <- c('HYP','HOR','AL','OL','SF','OT','CM','HYP_1',"HYP_2","HYP_3",'HOR_1',"HOR_2","HOR_3",'MASS_log_mean')
-fet_inputs <- c('HYP','HOR','AL','OL','SF','CM','MASS_log_mean')
+#fet_inputs <- c('HYP','HOR','AL','OL','SF','OT','CM','HYP_1',"HYP_2","HYP_3",'HOR_1',"HOR_2","HOR_3",'MASS_log_mean')
+fet_inputs <- c('HYP','HOR','AL','OL','SF','OT','CM')
+fet_inputs_all <- c('HYP','HOR','AL','OL','SF','OT','CM')
+fet_inputs_one <- c('MASS_log_mean','no_species_fact')
 
 param_steps <- 6 #buvo13
 param_round_digits <- 3
@@ -149,7 +151,9 @@ process_feature_names <- function(Feature)
 N <- dim(data_sites_all)[1]
 all_R2_lars_cv <- c(0:param_steps)
 all_R2_lars_fit <- c(0:param_steps)
-all_R2_ols_cv <- c(0:param_steps)
+all_R2_ols_all_cv <- c()
+all_R2_ols_mass_cv <- c()
+all_R2_ols_nspec_cv <- c()
 
 print('target now:')
 for (cik in 1:length(fet_targets))
@@ -157,12 +161,14 @@ for (cik in 1:length(fet_targets))
   target_now <- fet_targets[cik]
   print(target_now)
   
-  data_sites <- data_sites_all[,c(target_now,fet_inputs)] #for pls filter data
+  data_sites <- data_sites_all[,c(target_now,union(union(fet_inputs,fet_inputs_one),fet_inputs_all))] #for pls filter data
   fml <- as.formula(paste(target_now,'  ~.')) #regression variables, formula for pls
   
   predictions_lars_cv <- c()
   predictions_lars_fit <- c()
-  predictions_ols_cv <- c()
+  predictions_ols_all_cv <- c()
+  predictions_ols_mass_cv <- c()
+  predictions_ols_nspec_cv <- c()
   
   model_collection_lars <- c()
   
@@ -178,9 +184,9 @@ for (cik in 1:length(fet_targets))
     #fit models
     fit_lars <- lars(as.matrix(data_sites[ind_train,fet_inputs]),as.matrix(data_sites[ind_train,target_now]), normalize = TRUE,max.steps = param_steps)
     
-    fit_ols <- lm(as.formula(paste(target_now,'~.')), data=data_sites[ind_train,c(fet_inputs,target_now)])
-    fit_ols <- lm(as.formula(paste(target_now,'~ MASS_log_mean')), data=data_sites[ind_train,c(fet_inputs,target_now)])
-    #fit_ols <- lm(as.formula(paste(target_now,'~ no_species_fact')), data=data_sites[ind_train,c(fet_inputs,target_now)])
+    fit_ols_all <- lm(as.formula(paste(target_now,'~.')), data=data_sites[ind_train,c(fet_inputs_all,target_now)])
+    fit_ols_mass <- lm(as.formula(paste(target_now,'~ MASS_log_mean')), data=data_sites[ind_train,c(fet_inputs_one,target_now)])
+    fit_ols_nspec <- lm(as.formula(paste(target_now,'~ no_species_fact')), data=data_sites[ind_train,c(fet_inputs_one,target_now)])
     
     #extract models (coefficients) plain regression
     model_lars <- coef(fit_lars, mode = 'step')
@@ -188,7 +194,6 @@ for (cik in 1:length(fet_targets))
     intercept_lars <- predict.lars(fit_lars, data_sites[ind_test,fet_inputs]*0, type="fit")
   
     model_collection_lars <- rbind(model_collection_lars,c(model_lars[param_model_select_lars,],intercept_lars$fit[param_model_select_lars]))
-
     
     #selection order
     for (sk6 in 1:param_steps)
@@ -213,7 +218,9 @@ for (cik in 1:length(fet_targets))
     #predictions together with ground truth in the first column
     pp_lars <- predict.lars(fit_lars, data_sites[ind_test,fet_inputs], type="fit")
     predictions_lars_cv <- rbind(predictions_lars_cv,cbind(data_sites[ind_test,target_now],t(pp_lars$fit)))
-    predictions_ols_cv <- rbind(predictions_ols_cv,cbind(data_sites[ind_test,target_now],predict(fit_ols,data_sites[ind_test,c(fet_inputs,target_now)])))
+    predictions_ols_all_cv <- rbind(predictions_ols_all_cv,cbind(data_sites[ind_test,target_now],predict(fit_ols_all,data_sites[ind_test,c(fet_inputs_all,target_now)])))
+    predictions_ols_mass_cv <- rbind(predictions_ols_mass_cv,cbind(data_sites[ind_test,target_now],predict(fit_ols_mass,data_sites[ind_test,c(fet_inputs_one,target_now)])))
+    predictions_ols_nspec_cv <- rbind(predictions_ols_nspec_cv,cbind(data_sites[ind_test,target_now],predict(fit_ols_nspec,data_sites[ind_test,c(fet_inputs_one,target_now)])))
     
     #manual prediction (model lars)
     #sum(model[13,]*data_sites[ind_test,fet_inputs]) + intercept$fit[13])
@@ -222,10 +229,14 @@ for (cik in 1:length(fet_targets))
   }
   
   R2_lars_cv <- compute_R2_matrix(predictions_lars_cv)
-  R2_ols_cv <- compute_R2_matrix(predictions_ols_cv)
+  R2_ols_all_cv <- compute_R2_matrix(predictions_ols_all_cv)
+  R2_ols_mass_cv <- compute_R2_matrix(predictions_ols_mass_cv)
+  R2_ols_nspec_cv <- compute_R2_matrix(predictions_ols_nspec_cv)
   
   all_R2_lars_cv <- cbind(all_R2_lars_cv,round(R2_lars_cv,digits = param_round_digits))
-  all_R2_ols_cv <- cbind(all_R2_ols_cv,round(R2_ols_cv,digits = param_round_digits))
+  all_R2_ols_all_cv <- cbind(all_R2_ols_all_cv,round(R2_ols_all_cv,digits = param_round_digits))
+  all_R2_ols_mass_cv <- cbind(all_R2_ols_mass_cv,round(R2_ols_mass_cv,digits = param_round_digits))
+  all_R2_ols_nspec_cv <- cbind(all_R2_ols_nspec_cv,round(R2_ols_nspec_cv,digits = param_round_digits))
   
   #full fit and add to models as the last row
   fit_lars <- lars(as.matrix(data_sites[,fet_inputs]),as.matrix(data_sites[,target_now]), normalize = TRUE,max.steps = param_steps)
@@ -247,11 +258,11 @@ for (cik in 1:length(fet_targets))
   if (target_now == param_target1){
     mod <- coef(fit_lars, mode = 'step')
     int <- predict.lars(fit_lars, data_sites[ind_test,fet_inputs]*0, type="fit")
-    model_now <- c(mod[param_select_t3+1,],int$fit[param_select_t3+1]) #+1 because 1st model 0
+    model_now <- c(mod[param_select_t1+1,],int$fit[param_select_t1+1]) #+1 because 1st model 0
     mnames <- names(model_now)[1:(length(model_now)-1)]
     model_now <- as.vector(model_now)
     md <- make_write_down_model(round(model_now,digits = dg1),mnames)
-    write.table(md,file = output_model3,quote = FALSE,row.names = FALSE,sep=',')
+    write.table(md,file = output_model1,quote = FALSE,row.names = FALSE,sep=',')
     # predictions_lars_cv <- rbind(predictions_lars_cv,cbind(data_sites[ind_test,target_now],t(pp_lars$fit)))
     predictions_t1_cv <- cbind(as.data.frame(round(predictions_lars_cv,digits = dg1)),data_sites_all[,c('SITE','LAT','LON')],round(compute_R2_matrix(predictions_lars_cv)[param_select_t1+1],digits = 3))
     predictions_t1_fit <- cbind(as.data.frame(round(predictions_lars_fit,digits = dg1)),data_sites_all[,c('SITE','LAT','LON')],round(compute_R2_matrix(predictions_lars_fit)[param_select_t1+1],digits = 3))
@@ -267,6 +278,9 @@ for (cik in 1:length(fet_targets))
 
 colnames(all_R2_lars_cv) <- c('step',fet_targets)
 colnames(all_R2_lars_fit) <- c('step',fet_targets)
+colnames(all_R2_ols_all_cv) <- fet_targets
+colnames(all_R2_ols_mass_cv) <- fet_targets
+colnames(all_R2_ols_nspec_cv) <- fet_targets
 
 write.table(all_R2_lars_cv,file = output_file_R2_lars_cv,quote = FALSE,row.names = FALSE,sep='\t')
 write.table(all_R2_lars_fit,file = output_file_R2_lars_fit,quote = FALSE,row.names = FALSE,sep='\t')

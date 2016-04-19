@@ -1,8 +1,10 @@
 Feature	Importance	Frequency	Sign	Consistency
 mean(SF)	6	1	-	1
-mean(OL)	4.6	1	-	1
-mean(HOR)	3	0.92	-	0.92
-mean(CM)	2.8	1	+	0.85
-mean(AL)	2.7	0.92	+	0.58
-mean(HYP)	0.8	0.62	+	0.88
-mean(log(MASS))	0.8	0.31	-	0.75
+mean(OL)	4.5	1	-	1
+mean(OT)	3.5	1	+	1
+mean(HOR)	2.7	0.92	-	0.92
+mean(AL)	1.4	0.54	-	0.57
+mean(HYP)	1.3	0.69	-	1
+mean(CM)	1.2	0.62	-	0.88
+mean(log(MASS))	0	0	.	NA
+prop(no=species=fact)	0	0	.	NA
