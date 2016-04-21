@@ -42,10 +42,8 @@ cor_all <- t(cor_all)
 process_feature_names <- function(Feature)
 {
   Feature <- gsub('MASS_log_mean','log(MASS)',Feature)
-  Feature <- gsub('WCT_', '', Feature)
   Feature <- gsub('KG_', 'KG', Feature)
   Feature <- gsub('_KG', '', Feature)
-  Feature <- gsub('new', '', Feature)
   Feature <- gsub('_', '=', Feature)
   for (sk in 1:length(Feature))
   {

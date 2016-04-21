@@ -6,58 +6,28 @@ library(lars)
 #Net primary productivity (NPP) is computed from temperature and precipitation using the classic formula from Leith (1972), as cited in Liu et al (2012). 
 
 #read
-input_file_name <- 'working_data/data_hyp4.csv'
+input_file_name <- 'working_data/data_all.csv'
 
 output_file_R2_lars_fit <- 'working_data/out_R2_lars_fit.csv'
 output_file_R2_lars_cv <- 'working_data/out_R2_lars_cv.csv'
-output_file_predictions_t1_cv <- 'working_data/out_predictions_t1_cv.csv'
-output_file_predictions_t1_fit <- 'working_data/out_predictions_t1_fit.csv'
+output_file_R2_one_cv <- 'working_data/out_R2_one_cv.csv'
 output_file_models_lars <- 'working_data/out_models_lars.csv'
-output_file_features_t1 <- 'working_data/out_feature_selection_t1.csv'
-#output_file_fet_coefficients <- 'working_data/out_feature_coefficients.csv'
-output_file_fet_coefficients_t1 <- 'working_data/out_feature_coefficients_t1.csv'
-output_model1 <- 'working_data/out_model1_fit.txt'
 
+output_file_table <- 'results/table11.txt'
 
-input_file_features_t1 <- output_file_features_t1
-input_file_fet_coefficients_t1 <- output_file_fet_coefficients_t1
+R2_files <- c(output_file_R2_lars_fit,output_file_R2_lars_cv,output_file_R2_one_cv)
 
-output_file_table2 <- 'results/table6.txt'
-output_file_table3 <- 'results/table7.txt'
-output_file_table4 <- 'results/table8.txt'
-
-plot_name_fig2 <- 'results/figure2.pdf'
-plot_name_NPP <- 'results/figureNPP.pdf'
-
-R2_files <- c(output_file_R2_lars_fit,output_file_R2_lars_cv)
-
-fet_targets <- c('PREC','PREC_MIN','PREC_MAX','PRECsp_MIN','PRECsp_MAX','NPP','NPP_MIN','NDVI','NDVI_MIN')
-
-#fet_targets <- c('ELEV','TEMP','TEMP_MAX','TEMP_MIN', 'TEMPmax_MAX','TEMPmin_MIN','TEMPmax','TEMPmin')
-# TEMP2 is the most extreme (min of min)
-# TEMP is mean of min
-# TEMP3 is min of mean
+fet_targets <- c('TEMP','TEMP_MIN','TEMPmin_MIN','TEMPmin','TEMP_MAX','TEMPmax_MAX','TEMPmax','PREC','PREC_MIN','PRECsp_MIN','PREC_MAX','PRECsp_MAX','NPP','NPP_MIN','NDVI','NDVI_MIN')
 
 data_sites_all <- read.csv(input_file_name, header = TRUE)
 p <- dim(data_sites_all)[2]
 
-#0s removed due to linear dependence
-#fet_inputs <- c('HYP','HOR','AL','OL','SF','OT','CM','HYP_1',"HYP_2","HYP_3",'HOR_1',"HOR_2","HOR_3",'MASS_log_mean')
 fet_inputs <- c('HYP','HOR','AL','OL','SF','OT','CM')
 fet_inputs_all <- c('HYP','HOR','AL','OL','SF','OT','CM')
 fet_inputs_one <- c('MASS_log_mean','no_species_fact')
 
 param_steps <- 6 #buvo13
 param_round_digits <- 3
-
-#for model reporting
-param_model_select_lars <- 6+1 #the first model is 0
-
-#for recording models for analysis of variable importance
-param_target1 <- 'TEMP_MAX'
-param_select_t1 <- 1 #which model
-dg1 <- 0
-
 
 ##############################################################
 #functions
@@ -281,9 +251,13 @@ colnames(all_R2_lars_fit) <- c('step',fet_targets)
 colnames(all_R2_ols_all_cv) <- fet_targets
 colnames(all_R2_ols_mass_cv) <- fet_targets
 colnames(all_R2_ols_nspec_cv) <- fet_targets
+step <- c(1,2,3)
+all_R2_one_cv <- cbind(step,rbind(all_R2_ols_all_cv,all_R2_ols_mass_cv,all_R2_ols_nspec_cv))
 
 write.table(all_R2_lars_cv,file = output_file_R2_lars_cv,quote = FALSE,row.names = FALSE,sep='\t')
 write.table(all_R2_lars_fit,file = output_file_R2_lars_fit,quote = FALSE,row.names = FALSE,sep='\t')
+write.table(all_R2_one_cv,file = output_file_R2_one_cv,quote = FALSE,row.names = FALSE,sep='\t')
+
 
 write.table(predictions_t1_fit,file = output_file_predictions_t1_fit,quote = FALSE,row.names = FALSE,sep='\t')
 write.table(predictions_t1_cv,file = output_file_predictions_t1_cv,quote = FALSE,row.names = FALSE,sep='\t')
@@ -301,30 +275,40 @@ write.table(fet_coefs_t1,file = output_file_fet_coefficients_t1,quote = FALSE,ro
 #plotting 
 
 xlabels <- c('selection step','selection step')
-ylabels <- c('R2',NA)
-naive <- c(0,-0.174)
-titles <- c('LARS fit (modeling)','LARS CV (testing)')
+ylabels <- c('R2',NA,NA)
+naive <- c(0,-0.174,-0.174)
+titles <- c('LARS fit (modeling)','LARS CV (testing)', 'OLS CV')
 #parula
 mycolors <-c('#0072bd','#d95319','#edb120','#7e2f8e','#77ac30','#4dbeee','#a2142f','#808080','#000000')
-mylwd <- 2.2
+mylwd <- 1.5
 
 # figure 2
-pdf(plot_name_fig2,width = 6, height = 3.15)
+pdf(plot_name_fig2,width = 6, height = 2.7)
 #png(plot_name)
-par(mfrow = c(1,2), mar= c(4, 4, 1, 1) + 0.2) #matrix of subplots, mar is for margins
-for (plt in 1:2)
+#par(mfrow = c(1,3), mar= c(4, 4, 1, 1) + 0.2) #matrix of subplots, mar is for margins
+layout(t(c(1,2,3)),widths = c(2.5,2.5,1.5), heights = c(2.5,2.5,2.5))
+for (plt in 1:3)
 {
   #read file
   R2 <- read.csv(R2_files[plt], header = TRUE, sep = '\t')
   n <- dim(R2)[1]
   p <- dim(R2)[2]
   #setting up plotting area
-  plot(NA,xlab = xlabels[plt],ylab = ylabels[plt],main = titles[plt],xlim=c(R2[1,'step'],R2[n,'step']),ylim=c(-1,1))
+  if (plt==3){
+    plot(NA,xlab = xlabels[plt],ylab = ylabels[plt],main = titles[plt],xlim=c(0,4),ylim=c(-1,1))
+  }else{
+    plot(NA,xlab = xlabels[plt],ylab = ylabels[plt],main = titles[plt],xlim=c(R2[1,'step'],R2[n,'step']),ylim=c(-1,1))
+  }
   #,ylim=c(min(R2[,c(2:p)]),max(R2[,c(2:p)])))
   #xaxs="i" reduces white space within axes
   for (sk in 1:length(fet_targets))
   {
-    points(R2[,'step'],R2[,fet_targets[sk]],type="o",col = mycolors[sk],lwd=mylwd,pch=sk,cex=0.6)
+    if (plt==3){
+      points(R2[,'step'],R2[,fet_targets[sk]],type="b",col = mycolors[sk],lwd=mylwd,pch=sk,cex=0.6)
+    }else{
+      points(R2[,'step'],R2[,fet_targets[sk]],type="o",col = mycolors[sk],lwd=mylwd,pch=sk,cex=0.6)
+    }
+    
   }  
   lines(c(R2[1,'step'],R2[n,'step']),c(naive[plt],naive[plt]),col = 1,lwd=1, lty=2)
   if (plt == 1 )
@@ -332,6 +316,7 @@ for (plt in 1:2)
     legend("bottom",fet_targets,bty='n',pch = c(1:sk), col = mycolors,lwd=mylwd,cex = 0.6)
   }
 }
+
 #legend("right",fet_targets,bty='n',pch = c(1:sk), col = mycolors,lwd=mylwd,cex = 0.7)
 dev.off()
 
