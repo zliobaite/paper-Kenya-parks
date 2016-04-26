@@ -114,10 +114,10 @@ colnames(pred_tab) <- c('Site','Site name','Area km2','Elev., m','Av. temp., C',
 write.table(pred_tab,file = output_file_table1,quote = FALSE,row.names = FALSE,sep='\t')
 
 #make Table A1
-pred_tab <- data_all[,c('SITE','SITE_name','TEMP_MIN','PREC_MIN','NPP_MIN','NDVI_MIN')]
+pred_tab <- data_all[,c('SITE','SITE_name','TEMP_MIN','PREC_MIN','NPP_MIN','NDVImin9')]
 pred_tab[,'TEMP_MIN'] <- round(pred_tab[,'TEMP_MIN'],digits = 1)
 pred_tab[,'PREC_MIN'] <- round(pred_tab[,'PREC_MIN'])
-pred_tab[,'NDVI_MIN'] <- round(pred_tab[,'NDVI_MIN'],digits = 2)
+pred_tab[,'NDVImin9'] <- round(pred_tab[,'NDVImin9'],digits = 2)
 colnames(pred_tab) <- c('Site','Site name','Min. temp., C','Min. precip., mm','Min. NPP, gC/m2year','Min. NDVI')
 write.table(pred_tab,file = output_file_tableA1,quote = FALSE,row.names = FALSE,sep='\t')
 

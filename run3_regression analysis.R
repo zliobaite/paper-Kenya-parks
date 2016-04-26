@@ -6,7 +6,8 @@ library(lars)
 #Net primary productivity (NPP) is computed from temperature and precipitation using the classic formula from Leith (1972), as cited in Liu et al (2012). 
 
 #read
-input_file_name <- 'working_data/data_all.csv'
+#input_file_name <- 'working_data/data_all.csv'
+input_file_name <- 'working_data/data_hyp4.csv'
 
 output_file_R2_lars_fit <- 'working_data/out_R2_lars_fit.csv'
 output_file_R2_lars_cv <- 'working_data/out_R2_lars_cv.csv'
@@ -20,12 +21,13 @@ do_plot_fig2 <- FALSE
 
 R2_files <- c(output_file_R2_lars_fit,output_file_R2_lars_cv,output_file_R2_one_cv)
 
-fet_targets <- c('TEMP','TEMP_MIN','TEMPmin_MIN','TEMPmin','TEMP_MAX','TEMPmax_MAX','TEMPmax','PREC','PREC_MIN','PRECsp_MIN','PREC_MAX','PRECsp_MAX','NPP','NPP_MIN','NDVI','NDVI_MIN')
+fet_targets <- c('PREC','PREC_MIN','PRECsp_MIN','PREC_MAX','PRECsp_MAX','NPP','NPP_MIN','NDVI','NDVImin','NDVImin_MIN','NDVImin1','NDVI1_MIN','NDVImin9','TEMP','TEMP_MIN','TEMPmin_MIN','TEMPmin','TEMP_MAX','TEMPmax_MAX','TEMPmax')
 
 data_sites_all <- read.csv(input_file_name, header = TRUE)
 p <- dim(data_sites_all)[2]
 
 fet_inputs <- c('HYP','HOR','AL','OL','SF','OT','CM')
+fet_inputs <- c('HYP','HOR','AL','OL','SF','OT','CM','HYP_4')
 fet_inputs_all <- c('HYP','HOR','AL','OL','SF','OT','CM','MASS_log_mean')
 fet_inputs_one <- c('MASS_log_mean','no_species_fact')
 
@@ -250,8 +252,8 @@ for (sk in 2:dim(all_R2_lars_cv)[2]){
   modelno <- c(modelno,all_R2_lars_cv[ind,'step'])
 }
 ind <- which(all_R2_lars_cv[,'step']==3)
-results_all <- cbind(t(all_R2_ols_mass_cv),t(all_R2_ols_nspec_cv),all_R2_lars_cv[ind,2:dim(all_R2_lars_cv)[2]],apply(all_R2_lars_cv[,2:dim(all_R2_lars_cv)[2]],2,max),t(all_R2_ols_all_cv))
-colnames(results_all) <- c('OLS mass','OLS no. spec.','LARS(3)','LARS best','OLS all')
+results_all <- cbind(t(all_R2_ols_mass_cv),all_R2_lars_cv[ind,2:dim(all_R2_lars_cv)[2]],apply(all_R2_lars_cv[,2:dim(all_R2_lars_cv)[2]],2,max),t(all_R2_ols_nspec_cv),t(all_R2_ols_all_cv))
+colnames(results_all) <- c('OLS mass','LARS(3)','LARS best','OLS no. spec.','OLS all')
 
 results_all <- (results_all - (-0.174))/(1 - (-0.174))
 results_all <- round(results_all,digits = 2)
