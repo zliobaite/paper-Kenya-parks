@@ -1,2 +1,0 @@
-x
-15 - 2 mean(SF) - 3 mean(CM)

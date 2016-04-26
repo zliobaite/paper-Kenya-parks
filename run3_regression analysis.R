@@ -14,6 +14,9 @@ output_file_R2_one_cv <- 'working_data/out_R2_one_cv.csv'
 output_file_models_lars <- 'working_data/out_models_lars.csv'
 
 output_file_table <- 'results/table11.txt'
+output_file_results_all <- 'results/table13.txt'
+
+do_plot_fig2 <- FALSE
 
 R2_files <- c(output_file_R2_lars_fit,output_file_R2_lars_cv,output_file_R2_one_cv)
 
@@ -23,11 +26,14 @@ data_sites_all <- read.csv(input_file_name, header = TRUE)
 p <- dim(data_sites_all)[2]
 
 fet_inputs <- c('HYP','HOR','AL','OL','SF','OT','CM')
-fet_inputs_all <- c('HYP','HOR','AL','OL','SF','OT','CM')
+fet_inputs_all <- c('HYP','HOR','AL','OL','SF','OT','CM','MASS_log_mean')
 fet_inputs_one <- c('MASS_log_mean','no_species_fact')
 
 param_steps <- 6 #buvo13
 param_round_digits <- 3
+
+#for model reporting
+param_model_select_lars <- 3+1 #the first model is 0
 
 ##############################################################
 #functions
@@ -225,23 +231,6 @@ for (cik in 1:length(fet_targets))
   
   all_R2_lars_fit <- cbind(all_R2_lars_fit,round(R2_lars_fit,digits = param_round_digits))
   
-  if (target_now == param_target1){
-    mod <- coef(fit_lars, mode = 'step')
-    int <- predict.lars(fit_lars, data_sites[ind_test,fet_inputs]*0, type="fit")
-    model_now <- c(mod[param_select_t1+1,],int$fit[param_select_t1+1]) #+1 because 1st model 0
-    mnames <- names(model_now)[1:(length(model_now)-1)]
-    model_now <- as.vector(model_now)
-    md <- make_write_down_model(round(model_now,digits = dg1),mnames)
-    write.table(md,file = output_model1,quote = FALSE,row.names = FALSE,sep=',')
-    # predictions_lars_cv <- rbind(predictions_lars_cv,cbind(data_sites[ind_test,target_now],t(pp_lars$fit)))
-    predictions_t1_cv <- cbind(as.data.frame(round(predictions_lars_cv,digits = dg1)),data_sites_all[,c('SITE','LAT','LON')],round(compute_R2_matrix(predictions_lars_cv)[param_select_t1+1],digits = 3))
-    predictions_t1_fit <- cbind(as.data.frame(round(predictions_lars_fit,digits = dg1)),data_sites_all[,c('SITE','LAT','LON')],round(compute_R2_matrix(predictions_lars_fit)[param_select_t1+1],digits = 3))
-    colnames(predictions_t1_cv) <- c('true',rep('pr',(dim( predictions_t1_cv)[2]-5)),'SITE','LAT','LON','R2')
-    colnames(predictions_t1_fit) <- c('true',rep('pr',(dim( predictions_t1_fit)[2]-5)),'SITE','LAT','LON','R2')
-    fet_selection_t1 <- fet_selection_lars
-    fet_coefs_t1 <- fet_coefs_lars
-  }
-  
   #jacknife
   #jack = sqrt(apply((model_collection[1:13,] - matrix(1,13,1)%*%model_collection[14,])^2,2,sum)*(N-1)/N)
 }
@@ -251,130 +240,77 @@ colnames(all_R2_lars_fit) <- c('step',fet_targets)
 colnames(all_R2_ols_all_cv) <- fet_targets
 colnames(all_R2_ols_mass_cv) <- fet_targets
 colnames(all_R2_ols_nspec_cv) <- fet_targets
-step <- c(1,2,3)
+step <- c('all','mass','nspec')
 all_R2_one_cv <- cbind(step,rbind(all_R2_ols_all_cv,all_R2_ols_mass_cv,all_R2_ols_nspec_cv))
+
+
+modelno <- c()
+for (sk in 2:dim(all_R2_lars_cv)[2]){
+  ind <- which(all_R2_lars_cv[,sk] == max(all_R2_lars_cv[,sk]))
+  modelno <- c(modelno,all_R2_lars_cv[ind,'step'])
+}
+ind <- which(all_R2_lars_cv[,'step']==3)
+results_all <- cbind(t(all_R2_ols_mass_cv),t(all_R2_ols_nspec_cv),all_R2_lars_cv[ind,2:dim(all_R2_lars_cv)[2]],apply(all_R2_lars_cv[,2:dim(all_R2_lars_cv)[2]],2,max),t(all_R2_ols_all_cv))
+colnames(results_all) <- c('OLS mass','OLS no. spec.','LARS(3)','LARS best','OLS all')
+
+results_all <- (results_all - (-0.174))/(1 - (-0.174))
+results_all <- round(results_all,digits = 2)
+rownames(all_R2_ols_all_cv) <- names(all_R2_ols_all_cv)
+results_all <- cbind(results_all,modelno)
+
+
+write.table(results_all,file = output_file_results_all,quote = FALSE,row.names = TRUE,sep='\t')
 
 write.table(all_R2_lars_cv,file = output_file_R2_lars_cv,quote = FALSE,row.names = FALSE,sep='\t')
 write.table(all_R2_lars_fit,file = output_file_R2_lars_fit,quote = FALSE,row.names = FALSE,sep='\t')
 write.table(all_R2_one_cv,file = output_file_R2_one_cv,quote = FALSE,row.names = FALSE,sep='\t')
 
-
-write.table(predictions_t1_fit,file = output_file_predictions_t1_fit,quote = FALSE,row.names = FALSE,sep='\t')
-write.table(predictions_t1_cv,file = output_file_predictions_t1_cv,quote = FALSE,row.names = FALSE,sep='\t')
-
-
-
-#write LARS models
-#write.table(model_collection_lars,file = output_file_models_lars,quote = FALSE,row.names = FALSE,sep='\t')
-#write feature selections
-write.table(fet_selection_t1,file = output_file_features_t1,quote = FALSE,row.names = FALSE,sep='\t')
-write.table(fet_coefs_t1,file = output_file_fet_coefficients_t1,quote = FALSE,row.names = FALSE,sep='\t')
-
-
-############################################################################################
-#plotting 
-
-xlabels <- c('selection step','selection step')
-ylabels <- c('R2',NA,NA)
-naive <- c(0,-0.174,-0.174)
-titles <- c('LARS fit (modeling)','LARS CV (testing)', 'OLS CV')
-#parula
-mycolors <-c('#0072bd','#d95319','#edb120','#7e2f8e','#77ac30','#4dbeee','#a2142f','#808080','#000000')
-mylwd <- 1.5
-
-# figure 2
-pdf(plot_name_fig2,width = 6, height = 2.7)
-#png(plot_name)
-#par(mfrow = c(1,3), mar= c(4, 4, 1, 1) + 0.2) #matrix of subplots, mar is for margins
-layout(t(c(1,2,3)),widths = c(2.5,2.5,1.5), heights = c(2.5,2.5,2.5))
-for (plt in 1:3)
-{
-  #read file
-  R2 <- read.csv(R2_files[plt], header = TRUE, sep = '\t')
-  n <- dim(R2)[1]
-  p <- dim(R2)[2]
-  #setting up plotting area
-  if (plt==3){
-    plot(NA,xlab = xlabels[plt],ylab = ylabels[plt],main = titles[plt],xlim=c(0,4),ylim=c(-1,1))
-  }else{
-    plot(NA,xlab = xlabels[plt],ylab = ylabels[plt],main = titles[plt],xlim=c(R2[1,'step'],R2[n,'step']),ylim=c(-1,1))
-  }
-  #,ylim=c(min(R2[,c(2:p)]),max(R2[,c(2:p)])))
-  #xaxs="i" reduces white space within axes
-  for (sk in 1:length(fet_targets))
+if (do_plot_fig2){
+  ############################################################################################
+  #plotting 
+  
+  xlabels <- c('selection step','selection step')
+  ylabels <- c('R2',NA,NA)
+  naive <- c(0,-0.174,-0.174)
+  titles <- c('LARS fit (modeling)','LARS CV (testing)', 'OLS CV')
+  #parula
+  mycolors <-c('#0072bd','#d95319','#edb120','#7e2f8e','#77ac30','#4dbeee','#a2142f','#808080','#000000')
+  mylwd <- 1.5
+  
+  # figure 2
+  pdf(plot_name_fig2,width = 6, height = 2.7)
+  #png(plot_name)
+  #par(mfrow = c(1,3), mar= c(4, 4, 1, 1) + 0.2) #matrix of subplots, mar is for margins
+  layout(t(c(1,2,3)),widths = c(2.5,2.5,1.5), heights = c(2.5,2.5,2.5))
+  for (plt in 1:3)
   {
+    #read file
+    R2 <- read.csv(R2_files[plt], header = TRUE, sep = '\t')
+    n <- dim(R2)[1]
+    p <- dim(R2)[2]
+    #setting up plotting area
     if (plt==3){
-      points(R2[,'step'],R2[,fet_targets[sk]],type="b",col = mycolors[sk],lwd=mylwd,pch=sk,cex=0.6)
+      plot(NA,xlab = xlabels[plt],ylab = ylabels[plt],main = titles[plt],xlim=c(0,4),ylim=c(-1,1))
     }else{
-      points(R2[,'step'],R2[,fet_targets[sk]],type="o",col = mycolors[sk],lwd=mylwd,pch=sk,cex=0.6)
+      plot(NA,xlab = xlabels[plt],ylab = ylabels[plt],main = titles[plt],xlim=c(R2[1,'step'],R2[n,'step']),ylim=c(-1,1))
     }
-    
-  }  
-  lines(c(R2[1,'step'],R2[n,'step']),c(naive[plt],naive[plt]),col = 1,lwd=1, lty=2)
-  if (plt == 1 )
-  {
-    legend("bottom",fet_targets,bty='n',pch = c(1:sk), col = mycolors,lwd=mylwd,cex = 0.6)
-  }
-}
-
-#legend("right",fet_targets,bty='n',pch = c(1:sk), col = mycolors,lwd=mylwd,cex = 0.7)
-dev.off()
-
-#################################################
-#feature selection tables
-
-make_feature_table <- function(input_file_features,input_file_fet_coefficients,out_file,out_file_latex)
-{
-  feature_selection <-read.csv(input_file_features, header = TRUE, sep = '\t')
-  feature_selection <- feature_selection[,c(2:dim(feature_selection)[2])]
-  mean_rating <- apply(feature_selection,2,mean)
-  ind <- order(-mean_rating)
-  Feature <- names(mean_rating[ind])
-  
-  Feature <- process_feature_names(Feature)
-  
-  Importance <-  round(mean_rating[ind],digits = 1)
-  Frequency <- round(apply(feature_selection[,ind]>0,2,sum)/dim(feature_selection)[1],digits=2)
-  feature_table <- cbind(Feature,Importance,Frequency)
-  
-  feature_coefficients <-read.csv(input_file_fet_coefficients, header = TRUE, sep = '\t')
-  #assume the same order as features
-  feature_coefficients <- feature_coefficients[,c(2:dim(feature_coefficients)[2])]
-  feature_coefficients <- feature_coefficients[,ind]
-  Sign <- c()
-  Consistency <- c()
-  for (sk in 1:dim(feature_coefficients)[2])
-  {
-    ind_pl <- which(feature_coefficients[,sk]==1)
-    ind_mn <- which(feature_coefficients[,sk]==-1)
-    lpl <- length(ind_pl)
-    lmn <- length(ind_mn)
-    if (lpl>lmn)
+    #,ylim=c(min(R2[,c(2:p)]),max(R2[,c(2:p)])))
+    #xaxs="i" reduces white space within axes
+    for (sk in 1:length(fet_targets))
     {
-      Sign <- rbind(Sign,'+')
-      Consistency <- rbind(Consistency,lpl/(lpl+lmn))
-    }
-    else
-    {
-      if (lpl<lmn)
-      {
-        Sign <- rbind(Sign,'-')
-        Consistency <- rbind(Consistency,lmn/(lpl+lmn))
-      }
-      else
-      {
-        Sign <- rbind(Sign,'.')
-        Consistency <- rbind(Consistency,NA)
+      if (plt==3){
+        points(R2[,'step'],R2[,fet_targets[sk]],type="b",col = mycolors[sk],lwd=mylwd,pch=sk,cex=0.6)
+      }else{
+        points(R2[,'step'],R2[,fet_targets[sk]],type="o",col = mycolors[sk],lwd=mylwd,pch=sk,cex=0.6)
       }
     }  
+    lines(c(R2[1,'step'],R2[n,'step']),c(naive[plt],naive[plt]),col = 1,lwd=1, lty=2)
+    if (plt == 1 )
+    {
+      legend("bottom",fet_targets,bty='n',pch = c(1:sk), col = mycolors,lwd=mylwd,cex = 0.6)
+    }
   }
-  Consistency <- round(Consistency,digits = 2)
-  colnames(Sign) <- 'Sign'
-  colnames(Consistency) <- 'Consistency'
-  
-  feature_table <- cbind(feature_table,Sign,Consistency)
-  
-  write.table(feature_table,file = out_file,quote = FALSE,row.names = FALSE,sep='\t')
+  #legend("right",fet_targets,bty='n',pch = c(1:sk), col = mycolors,lwd=mylwd,cex = 0.7)
+  dev.off()
 }
 
-make_feature_table(input_file_features_t1,input_file_fet_coefficients_t1,output_file_table2)

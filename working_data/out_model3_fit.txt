@@ -1,2 +1,0 @@
-x
-82 + 2 mean(HYP) - 19 mean(HOR) - 39 mean(OL) - 92 mean(SF) + 18 mean(CM)
