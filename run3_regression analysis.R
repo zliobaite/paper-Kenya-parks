@@ -6,8 +6,8 @@ library(lars)
 #Net primary productivity (NPP) is computed from temperature and precipitation using the classic formula from Leith (1972), as cited in Liu et al (2012). 
 
 #read
-#input_file_name <- 'working_data/data_all.csv'
-input_file_name <- 'working_data/data_hyp4.csv'
+input_file_name <- 'working_data/data_all.csv'
+#input_file_name <- 'working_data/data_hyp4.csv'
 
 output_file_R2_lars_fit <- 'working_data/out_R2_lars_fit.csv'
 output_file_R2_lars_cv <- 'working_data/out_R2_lars_cv.csv'
@@ -21,13 +21,13 @@ do_plot_fig2 <- FALSE
 
 R2_files <- c(output_file_R2_lars_fit,output_file_R2_lars_cv,output_file_R2_one_cv)
 
-fet_targets <- c('PREC','PREC_MIN','PRECsp_MIN','PREC_MAX','PRECsp_MAX','NPP','NPP_MIN','NDVI','NDVImin','NDVImin_MIN','NDVImin1','NDVI1_MIN','NDVImin9','TEMP','TEMP_MIN','TEMPmin_MIN','TEMPmin','TEMP_MAX','TEMPmax_MAX','TEMPmax')
+fet_targets <- c('PREC','PREC_MIN','PRECsp_MIN','PREC_MAX','PRECsp_MAX','NPP','NPPmin_MIN','NPPmin_spMIN','NPP_MIN_MIN','NPP_MIN_spMIN','NDVI','NDVImin','NDVImin_MIN','NDVImin1','NDVI1_MIN','NDVImin9','TEMP','TEMP_MIN','TEMPmin_MIN','TEMPmin','TEMP_MAX','TEMPmax_MAX','TEMPmax')
 
 data_sites_all <- read.csv(input_file_name, header = TRUE)
 p <- dim(data_sites_all)[2]
 
 fet_inputs <- c('HYP','HOR','AL','OL','SF','OT','CM')
-fet_inputs <- c('HYP','HOR','AL','OL','SF','OT','CM','HYP_4')
+#fet_inputs <- c('HYP','HOR','AL','OL','SF','OT','CM','HYP_4')
 fet_inputs_all <- c('HYP','HOR','AL','OL','SF','OT','CM','MASS_log_mean')
 fet_inputs_one <- c('MASS_log_mean','no_species_fact')
 
