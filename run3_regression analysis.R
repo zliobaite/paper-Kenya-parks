@@ -21,7 +21,7 @@ do_plot_fig2 <- FALSE
 
 R2_files <- c(output_file_R2_lars_fit,output_file_R2_lars_cv,output_file_R2_one_cv)
 
-fet_targets <- c('PREC','PREC_MIN','PRECsp_MIN','PREC_MAX','PRECsp_MAX','NPP','NPPmin_MIN','NPPmin_spMIN','NPP_MIN_MIN','NPP_MIN_spMIN','NDVI','NDVImin','NDVImin_MIN','NDVImin1','NDVI1_MIN','NDVImin9','TEMP','TEMP_MIN','TEMPmin_MIN','TEMPmin','TEMP_MAX','TEMPmax_MAX','TEMPmax')
+fet_targets <- c('PREC','PREC_MIN','PREC_low','PREC_MAX','PREC_high','NPP','NPP_MIN_MIN','NPP_low_low','NPP_low_MIN','NPP_MIN_low','NDVI','NDVI_MIN9y','NDVI_low1y','NDVI_low1y_MIN','NDVI_low','NDVI_low_MIN','TEMP','TEMP_MIN','TEMP_low','TEMP_low_MIN','TEMP_MAX','TEMP_high','TEMP_high_MAX')
 
 data_sites_all <- read.csv(input_file_name, header = TRUE)
 p <- dim(data_sites_all)[2]

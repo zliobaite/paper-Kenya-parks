@@ -11,7 +11,7 @@ plot_name_fig1 <- 'results/figure1.pdf'
 #plot_name_fig1_png <- 'results/figure1.png'
 plot_name_figA2 <- 'results/figureA2.pdf'
 
-fet_targets <- c('ELEV','TEMP','TEMP_MIN','TEMPmin_MIN','TEMPmin','TEMP_MAX','TEMPmax_MAX','TEMPmax','PREC','PREC_MIN','PRECsp_MIN','PREC_MAX','PRECsp_MAX','NPP','NPPmin_MIN','NPPmin_spMIN','NPP_MIN_MIN','NPP_MIN_spMIN','NDVI','NDVImin','NDVImin_MIN','NDVImin1','NDVI1_MIN','NDVImin9','no_species_fact')
+fet_targets <- c('ELEV','TEMP','TEMP_MIN','TEMP_low','TEMP_low_MIN','TEMP_MAX','TEMP_high','TEMP_high_MAX','PREC','PREC_MIN','PREC_low','PREC_MAX','PREC_high','NPP','NPP_MIN_MIN','NPP_low_low','NPP_low_MIN','NPP_MIN_low','NDVI','NDVI_MIN9y','NDVI_low1y','NDVI_low1y_MIN','NDVI_low','NDVI_low_MIN','no_species_fact')
 
 fet_inputs <- c('HYP','HOR','AL','OL','SF','OT','CM','HYP_1', 'HYP_2','HYP_3','HOR_1','HOR_2','HOR_3','MASS_log_mean','no_species_fact','ELEV')
 

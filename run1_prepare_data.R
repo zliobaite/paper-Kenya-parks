@@ -92,17 +92,17 @@ NPPt <- 3000 / (1 + exp(1.315 - 0.119 * data_climate$TEMP))
 NPPp <- 3000 * (1 - exp(-0.000664*data_climate$PREC))
 NPP <- round(apply(cbind(NPPt,NPPp),1,min))
 
-NPPtmin <- 3000 / (1 + exp(1.315 - 0.119 * data_climate$TEMPmin))
+NPPt_low <- 3000 / (1 + exp(1.315 - 0.119 * data_climate$TEMP_low))
 NPPt_MIN <- 3000 / (1 + exp(1.315 - 0.119 * data_climate$TEMP_MIN))
-NPPpsp_MIN <- 3000 * (1 - exp(-0.000664*data_climate$PRECsp_MIN))
+NPPp_low <- 3000 * (1 - exp(-0.000664*data_climate$PREC_low))
 NPPp_MIN <- 3000 * (1 - exp(-0.000664*data_climate$PREC_MIN))
 
-NPPmin_MIN <- round(apply(cbind(NPPtmin,NPPp_MIN),1,min))
-NPPmin_spMIN <- round(apply(cbind(NPPtmin,NPPpsp_MIN),1,min))
+NPP_low_MIN <- round(apply(cbind(NPPt_low,NPPp_MIN),1,min))
+NPP_low_low <- round(apply(cbind(NPPt_low,NPPp_low),1,min))
 NPP_MIN_MIN <- round(apply(cbind(NPPt_MIN,NPPp_MIN),1,min))
-NPP_MIN_spMIN <- round(apply(cbind(NPPt_MIN,NPPpsp_MIN),1,min))
+NPP_MIN_low <- round(apply(cbind(NPPt_MIN,NPPp_low),1,min))
 
-data_all <- cbind(data_all,NPP,NPPmin_MIN,NPPmin_spMIN,NPP_MIN_MIN,NPP_MIN_spMIN)
+data_all <- cbind(data_all,NPP,NPP_low_MIN,NPP_low_low,NPP_MIN_MIN,NPP_MIN_low)
 
 
 #write file
@@ -120,10 +120,10 @@ colnames(pred_tab) <- c('Site','Site name','Area km2','Elev., m','Av. temp., C',
 write.table(pred_tab,file = output_file_table1,quote = FALSE,row.names = FALSE,sep='\t')
 
 #make Table A1
-pred_tab <- data_all[,c('SITE','SITE_name','TEMP_MIN','PREC_MIN','NPP_MIN_MIN','NDVImin9')]
+pred_tab <- data_all[,c('SITE','SITE_name','TEMP_MIN','PREC_MIN','NPP_MIN_MIN','NDVI_MIN9y')]
 pred_tab[,'TEMP_MIN'] <- round(pred_tab[,'TEMP_MIN'],digits = 1)
 pred_tab[,'PREC_MIN'] <- round(pred_tab[,'PREC_MIN'])
-pred_tab[,'NDVImin9'] <- round(pred_tab[,'NDVImin9'],digits = 2)
+pred_tab[,'NDVI_MIN9y'] <- round(pred_tab[,'NDVI_MIN9y'],digits = 2)
 colnames(pred_tab) <- c('Site','Site name','Min. temp., C','Min. precip., mm','Min. NPP, gC/m2year','Min. NDVI')
 write.table(pred_tab,file = output_file_tableA1,quote = FALSE,row.names = FALSE,sep='\t')
 
