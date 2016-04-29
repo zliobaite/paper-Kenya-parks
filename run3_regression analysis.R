@@ -26,10 +26,10 @@ fet_targets <- c('PREC','PREC_MIN','PREC_low','PREC_MAX','PREC_high','NPP','NPP_
 data_sites_all <- read.csv(input_file_name, header = TRUE)
 p <- dim(data_sites_all)[2]
 
-fet_inputs <- c('HYP','HOR','AL','OL','SF','OT','CM')
+fet_inputs <- c('HYP','HOD','AL','OL','SF','OT','CM')
 #fet_inputs <- c('HYP','HOR','AL','OL','SF','OT','CM','HYP_4')
-fet_inputs_all <- c('HYP','HOR','AL','OL','SF','OT','CM','MASS_log_mean')
-fet_inputs_one <- c('MASS_log_mean','no_species_fact')
+fet_inputs_all <- c('HYP','HOD','AL','OL','SF','OT','CM','MASS_log_mean')
+fet_inputs_one <- c('MASS_log_mean','species_count')
 
 param_steps <- 6 #buvo13
 param_round_digits <- 3
@@ -164,7 +164,7 @@ for (cik in 1:length(fet_targets))
     
     fit_ols_all <- lm(as.formula(paste(target_now,'~.')), data=data_sites[ind_train,c(fet_inputs_all,target_now)])
     fit_ols_mass <- lm(as.formula(paste(target_now,'~ MASS_log_mean')), data=data_sites[ind_train,c(fet_inputs_one,target_now)])
-    fit_ols_nspec <- lm(as.formula(paste(target_now,'~ no_species_fact')), data=data_sites[ind_train,c(fet_inputs_one,target_now)])
+    fit_ols_nspec <- lm(as.formula(paste(target_now,'~ species_count')), data=data_sites[ind_train,c(fet_inputs_one,target_now)])
     
     #extract models (coefficients) plain regression
     model_lars <- coef(fit_lars, mode = 'step')

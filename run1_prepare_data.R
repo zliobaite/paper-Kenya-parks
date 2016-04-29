@@ -8,9 +8,11 @@ input_file_climate <- 'input_data/data_climate.csv'
 output_file_data <- 'working_data/data_all.csv'
 output_file_table1 <- 'results/table1.txt'
 output_file_tableA1 <- 'results/tableA1.txt'
+output_file_tableA2 <- 'results/tableA2.txt'
+output_file_tableA3 <- 'results/tableA3.txt'
 output_file_tableSF2 <- 'results/tableSF2.txt'
 
-fet_extract <- c('HYP','HOR','AL','OL','SF','OT','CM') #features to extract
+fet_extract <- c('HYP','HOD','AL','OL','SF','OT','CM') #features to extract
 fet_mass <- 'MASS_KG' #feature for mass
 
 
@@ -64,7 +66,8 @@ from_species_to_sites <- function(occurence_matrix,data_traits,fet_extract,fet_m
   extracted_features_means <- round(extracted_features_means,digits = 3)
   extracted_features_proportions <- round(extracted_features_proportions,digits = 3)
   #print(extracted_mass)
-  data_all <- cbind(no_species_fact,extracted_mass,extracted_features_means)
+  species_count <- no_species_fact
+  data_all <- cbind(species_count,extracted_mass,extracted_features_means)
   colnames(data_all)[2] <- 'MASS_log_mean'
   colnames(data_all) <- c(colnames(data_all)[1:2],fet_extract)
   data_all <- cbind(data_all,extracted_features_proportions)
@@ -109,8 +112,21 @@ data_all <- cbind(data_all,NPP,NPP_low_MIN,NPP_low_low,NPP_MIN_MIN,NPP_MIN_low)
 write.table(data_all, file = output_file_data, quote = FALSE, row.names = FALSE,col.names = TRUE,sep=',')
 
 
+#write table A2
+write.table(t(data_occurence),file = output_file_tableA2,quote = FALSE,row.names = TRUE,col.names = FALSE,sep='\t')
+
+#write table A3
+
+fet_targets <- c('ELEV','TEMP','TEMP_MIN','TEMP_low','TEMP_low_MIN','TEMP_MAX','TEMP_high','TEMP_high_MAX','PREC','PREC_MIN','PREC_low','PREC_MAX','PREC_high','NPP','NPP_MIN_MIN','NPP_low_low','NPP_low_MIN','NPP_MIN_low','NDVI','NDVI_MIN9y','NDVI_low1y','NDVI_low1y_MIN','NDVI_low','NDVI_low_MIN','species_count')
+
+data_A3 <- data_all[,c('SITE',fet_targets)]
+
+write.table(t(data_A3),file = output_file_tableA3,quote = FALSE,row.names = TRUE,col.names = FALSE,sep='\t')
+
+
+
 #make Table 1
-pred_tab <- data_all[,c('SITE','SITE_name','AREA','ELEV','TEMP','PREC','NPP','NDVI','no_species_fact')]
+pred_tab <- data_all[,c('SITE','SITE_name','AREA','ELEV','TEMP','PREC','NPP','NDVI','species_count')]
 pred_tab[,'AREA'] <- round(pred_tab[,'AREA'])
 pred_tab[,'ELEV'] <- round(pred_tab[,'ELEV'])
 pred_tab[,'TEMP'] <- round(pred_tab[,'TEMP'],digits = 1)
