@@ -14,9 +14,12 @@ output_file_R2_lars_cv <- 'working_data/out_R2_lars_cv.csv'
 output_file_R2_one_cv <- 'working_data/out_R2_one_cv.csv'
 output_file_models_lars <- 'working_data/out_models_lars.csv'
 
-output_file_table <- 'results/table11.txt'
-output_file_results_all <- 'results/table13.txt'
+output_file_models_start <- 'working_data/models_LARS3/out_models_'
 
+output_file_table <- 'results/table11.txt'
+output_file_results_all <- 'results/table2.txt'
+output_file_models_fit <- 'results/table3.txt'
+  
 do_plot_fig2 <- FALSE
 
 R2_files <- c(output_file_R2_lars_fit,output_file_R2_lars_cv,output_file_R2_one_cv)
@@ -133,11 +136,23 @@ all_R2_ols_all_cv <- c()
 all_R2_ols_mass_cv <- c()
 all_R2_ols_nspec_cv <- c()
 
+model_collection_all <- c()
 print('target now:')
 for (cik in 1:length(fet_targets))
 {
   target_now <- fet_targets[cik]
   print(target_now)
+  if (substr(target_now, 1, 3)=='NDV'){
+    dg_now <- 3  
+  }else{
+    if (substr(target_now, 1, 3)=='TEM'){
+      dg_now <- 1
+    }else{
+      dg_now <- 0
+    }
+  }
+  
+  
   
   data_sites <- data_sites_all[,c(target_now,union(union(fet_inputs,fet_inputs_one),fet_inputs_all))] #for pls filter data
   fml <- as.formula(paste(target_now,'  ~.')) #regression variables, formula for pls
@@ -168,7 +183,6 @@ for (cik in 1:length(fet_targets))
     
     #extract models (coefficients) plain regression
     model_lars <- coef(fit_lars, mode = 'step')
-
     intercept_lars <- predict.lars(fit_lars, data_sites[ind_test,fet_inputs]*0, type="fit")
   
     model_collection_lars <- rbind(model_collection_lars,c(model_lars[param_model_select_lars,],intercept_lars$fit[param_model_select_lars]))
@@ -207,6 +221,7 @@ for (cik in 1:length(fet_targets))
   }
   
   R2_lars_cv <- compute_R2_matrix(predictions_lars_cv)
+  R2_lars_cv_normed <- (R2_lars_cv - (-0.174))/(1 - (-0.174))
   R2_ols_all_cv <- compute_R2_matrix(predictions_ols_all_cv)
   R2_ols_mass_cv <- compute_R2_matrix(predictions_ols_mass_cv)
   R2_ols_nspec_cv <- compute_R2_matrix(predictions_ols_nspec_cv)
@@ -220,10 +235,14 @@ for (cik in 1:length(fet_targets))
   fit_lars <- lars(as.matrix(data_sites[,fet_inputs]),as.matrix(data_sites[,target_now]), normalize = TRUE,max.steps = param_steps)
  
   model_lars <- coef(fit_lars, mode = 'step')
- 
   intercept_lars <- predict.lars(fit_lars, data_sites[ind_test,fet_inputs]*0, type="fit")
   
-  model_collection_lars <- rbind(model_collection_lars,c(model_lars[param_model_select_lars,],intercept_lars$fit[param_model_select_lars]))
+  model_collection_lars <- rbind(model_collection_lars,c(intercept_lars$fit[param_model_select_lars],model_lars[param_model_select_lars,]))
+  model_collection_lars <- round(model_collection_lars,digits = dg_now)
+  
+  #write models
+  output_file_models <- paste(output_file_models_start,target_now,'.csv',sep='')
+  write.table(model_collection_lars,file = output_file_models,quote = FALSE,row.names = TRUE,sep='\t')
   
   #predictions all
   pp_lars <- predict.lars(fit_lars, data_sites[,fet_inputs], type="fit")
@@ -235,7 +254,13 @@ for (cik in 1:length(fet_targets))
   
   #jacknife
   #jack = sqrt(apply((model_collection[1:13,] - matrix(1,13,1)%*%model_collection[14,])^2,2,sum)*(N-1)/N)
+  
+  model_collection_all <- rbind(model_collection_all,c(target_now,round(intercept_lars$fit[param_model_select_lars],digits=dg_now),round(model_lars[param_model_select_lars,],digits = dg_now),round(R2_lars_fit[param_model_select_lars],digits = 2),round(R2_lars_cv_normed[param_model_select_lars],digits = 2)))
+
 }
+colnames(model_collection_all)[2] <- 'intercept'
+colnames(model_collection_all)[10] <- 'R2 fit'
+colnames(model_collection_all)[11] <- 'R2* cv'
 
 colnames(all_R2_lars_cv) <- c('step',fet_targets)
 colnames(all_R2_lars_fit) <- c('step',fet_targets)
@@ -262,6 +287,8 @@ results_all <- cbind(results_all,modelno)
 
 
 write.table(results_all,file = output_file_results_all,quote = FALSE,row.names = TRUE,sep='\t')
+write.table(model_collection_all,file = output_file_models_fit,quote = FALSE,row.names = FALSE,sep='\t')
+
 
 write.table(all_R2_lars_cv,file = output_file_R2_lars_cv,quote = FALSE,row.names = FALSE,sep='\t')
 write.table(all_R2_lars_fit,file = output_file_R2_lars_fit,quote = FALSE,row.names = FALSE,sep='\t')

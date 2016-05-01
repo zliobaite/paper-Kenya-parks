@@ -12,6 +12,9 @@ output_file_tableA2 <- 'results/tableA2.txt'
 output_file_tableA3 <- 'results/tableA3.txt'
 output_file_tableSF2 <- 'results/tableSF2.txt'
 
+plot_name_cor1 <- 'results/figure1a.pdf'
+plot_name_cor2 <- 'results/figure1b.pdf'
+
 fet_extract <- c('HYP','HOD','AL','OL','SF','OT','CM') #features to extract
 fet_mass <- 'MASS_KG' #feature for mass
 
@@ -142,6 +145,25 @@ pred_tab[,'PREC_MIN'] <- round(pred_tab[,'PREC_MIN'])
 pred_tab[,'NDVI_MIN9y'] <- round(pred_tab[,'NDVI_MIN9y'],digits = 2)
 colnames(pred_tab) <- c('Site','Site name','Min. temp., C','Min. precip., mm','Min. NPP, gC/m2year','Min. NDVI')
 write.table(pred_tab,file = output_file_tableA1,quote = FALSE,row.names = FALSE,sep='\t')
+
+
+# corr plot 1, 63 samples
+library(corrplot)
+fet_cor <- c('HYP','HOD','AL','OL','SF','OT','CM')
+cor_traits <- round(cor(data_traits[,fet_cor]),digits = 2)
+cor_sites <- round(cor(data_sites[,fet_cor]),digits=2)
+colnames(cor_sites) <- paste('mean(',colnames(cor_sites),')',sep='')
+rownames(cor_sites) <- paste('mean(',rownames(cor_sites),')',sep='')
+
+pdf(plot_name_cor1,width = 3.4,height = 3.4)
+#png(plot_name_cor,width = 100, res = 100)
+corrplot(as.matrix(cor_traits),method="square",addCoef.col="black", addCoefasPercent = TRUE,cl.pos = "n")
+dev.off()
+
+pdf(plot_name_cor2,width = 4,height = 4)
+#png(plot_name_cor,width = 100, res = 100)
+corrplot(as.matrix(cor_sites),method="square",addCoef.col="black", addCoefasPercent = TRUE,cl.pos = "n")
+dev.off()
 
 #make Table SF=2
 ind_spec_SF2 <- which(data_traits[,'SF']==1)

@@ -7,7 +7,7 @@ library(corrplot)
 input_file_name <- 'working_data/data_all.csv'
 input_file2 <- 'input_data/data_occurence.csv'
 
-plot_name_fig1 <- 'results/figure1.pdf'
+plot_name_fig1 <- 'results/figure2.pdf'
 #plot_name_fig1_png <- 'results/figure1.png'
 plot_name_figA2 <- 'results/figureA2.pdf'
 
