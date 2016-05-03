@@ -30,7 +30,7 @@ data_sites_all <- read.csv(input_file_name, header = TRUE)
 p <- dim(data_sites_all)[2]
 
 fet_inputs <- c('HYP','HOD','AL','OL','SF','OT','CM')
-#fet_inputs <- c('HYP','HOR','AL','OL','SF','OT','CM','HYP_4')
+#fet_inputs <- c('HYP','HOD','AL','OL','SF','OT','CM','HYP_4')
 fet_inputs_all <- c('HYP','HOD','AL','OL','SF','OT','CM','MASS_log_mean')
 fet_inputs_one <- c('MASS_log_mean','species_count')
 
@@ -259,8 +259,8 @@ for (cik in 1:length(fet_targets))
 
 }
 colnames(model_collection_all)[2] <- 'intercept'
-colnames(model_collection_all)[10] <- 'R2 fit'
-colnames(model_collection_all)[11] <- 'R2* cv'
+colnames(model_collection_all)[(dim(model_collection_all)[2]-1)] <- 'R2 fit'
+colnames(model_collection_all)[dim(model_collection_all)[2]] <- 'R2* cv'
 
 colnames(all_R2_lars_cv) <- c('step',fet_targets)
 colnames(all_R2_lars_fit) <- c('step',fet_targets)

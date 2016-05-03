@@ -1,6 +1,5 @@
 # 2015 11 04 I.Zliobaite
 # this script takes occuence matrix, dental traits and climate variables as inputs, and prepares a summary dataset with sites in the rows and site characteristics in the columns
-# this modification makes a special-caes dataset were Equids are assigned a category HYP=4
 
 input_file_occurence <- 'input_data/data_occurence.csv'
 input_file_traits <- 'input_data/data_traits.csv'
@@ -8,7 +7,10 @@ input_file_climate <- 'input_data/data_climate.csv'
 
 output_file_data <- 'working_data/data_hyp4.csv'
 
-fet_extract <- c('HYP','HOR','AL','OL','SF','OT','CM') #features to extract
+plot_name_cor1 <- 'results/figure1a.pdf'
+plot_name_cor2 <- 'results/figure1b.pdf'
+
+fet_extract <- c('HYP','HOD','AL','OL','SF','OT','CM') #features to extract
 fet_mass <- 'MASS_KG' #feature for mass
 
 
@@ -17,9 +19,19 @@ data_occurence <- read.csv(input_file_occurence, header = TRUE)
 data_traits <- read.csv(input_file_traits, header = TRUE,sep = '\t')
 data_climate <- read.csv(input_file_climate, header = TRUE,sep = '\t')
 
-
 #impute equids HYP=4
 ind <- which(data_traits[,'FAMILY'] == 'Equidae')
+data_traits[ind,'HYP'] <- 4
+#Alcelaphus buselaphus
+#Beatragus hunteri
+#Connochaetes taurinus
+ind <- which(data_traits[,'TAXON'] == 'Alcelaphus buselaphus')
+data_traits[ind,'HYP'] <- 4
+ind <- which(data_traits[,'TAXON'] == 'Beatragus hunteri')
+data_traits[ind,'HYP'] <- 4
+ind <- which(data_traits[,'TAXON'] == 'Connochaetes taurinus')
+data_traits[ind,'HYP'] <- 4
+ind <- which(data_traits[,'TAXON'] == 'Loxodonta africana')
 data_traits[ind,'HYP'] <- 4
 
 #extract trait features
@@ -66,7 +78,8 @@ from_species_to_sites <- function(occurence_matrix,data_traits,fet_extract,fet_m
   extracted_features_means <- round(extracted_features_means,digits = 3)
   extracted_features_proportions <- round(extracted_features_proportions,digits = 3)
   #print(extracted_mass)
-  data_all <- cbind(no_species_fact,extracted_mass,extracted_features_means)
+  species_count <- no_species_fact
+  data_all <- cbind(species_count,extracted_mass,extracted_features_means)
   colnames(data_all)[2] <- 'MASS_log_mean'
   colnames(data_all) <- c(colnames(data_all)[1:2],fet_extract)
   data_all <- cbind(data_all,extracted_features_proportions)
@@ -94,11 +107,17 @@ NPPt <- 3000 / (1 + exp(1.315 - 0.119 * data_climate$TEMP))
 NPPp <- 3000 * (1 - exp(-0.000664*data_climate$PREC))
 NPP <- round(apply(cbind(NPPt,NPPp),1,min))
 
-NPPtmin <- 3000 / (1 + exp(1.315 - 0.119 * data_climate$TEMPmin))
-NPPpmin <- 3000 * (1 - exp(-0.000664*data_climate$PRECsp_MIN))
-NPP_MIN <- round(apply(cbind(NPPtmin,NPPpmin),1,min))
+NPPt_low <- 3000 / (1 + exp(1.315 - 0.119 * data_climate$TEMP_low))
+NPPt_MIN <- 3000 / (1 + exp(1.315 - 0.119 * data_climate$TEMP_MIN))
+NPPp_low <- 3000 * (1 - exp(-0.000664*data_climate$PREC_low))
+NPPp_MIN <- 3000 * (1 - exp(-0.000664*data_climate$PREC_MIN))
 
-data_all <- cbind(data_all,NPP,NPP_MIN)
+NPP_low_MIN <- round(apply(cbind(NPPt_low,NPPp_MIN),1,min))
+NPP_low_low <- round(apply(cbind(NPPt_low,NPPp_low),1,min))
+NPP_MIN_MIN <- round(apply(cbind(NPPt_MIN,NPPp_MIN),1,min))
+NPP_MIN_low <- round(apply(cbind(NPPt_MIN,NPPp_low),1,min))
+
+data_all <- cbind(data_all,NPP,NPP_low_MIN,NPP_low_low,NPP_MIN_MIN,NPP_MIN_low)
 
 
 #write file

@@ -184,3 +184,33 @@ species_tab[c(1:4),c(2:14)] <- gsub("0"," ",species_tab[c(1:4),c(2:14)])
 species_tab[c(1:4),c(2:14)] <- gsub("1","v",species_tab[c(1:4),c(2:14)])
 #species_tab[c(1:4),1] <- gsub("."," ",species_tab[c(1:4),1])
 write.table(species_tab,file = output_file_tableSF2,quote = FALSE,row.names = FALSE,sep='\t')
+
+#occurence sum
+
+occ_sum <- apply(data_occurence[,2:dim(data_occurence)[2]],2,sum)
+tax_SF1_hyp <- c('Hippotragus equinus','Hippotragus niger','Kobus ellipsiprymnus','Oryx beisa','Redunca fulvorufula','Redunca redunca')
+tax_SF1_mes <- c('Cephalophus adersi','Cephalophus harveyi','Cephalophus nigrifrons','Cephalophus silvicultor','Cephalophus weynsi','Hippopotamus amphibius','Hylochoerus meinertzhageni','Potamochoerus larvatus')
+#average number of sites is about the same
+mn_occ_hyp <- c()
+mn_hyp_hyp <- c()
+cnt_hyp <- c()
+for (sk in 1:length(tax_SF1_hyp)){
+  tax_now <- gsub(' ','.',tax_SF1_hyp[sk])
+  ind <- which(names(occ_sum)==tax_now)
+  mn_occ_hyp <- c(mn_occ_hyp,occ_sum[ind])
+  ind <- which(data_occurence[,tax_now]==1)
+  mn_hyp_hyp <- c(mn_hyp_hyp,mean(data_all[ind,'HYP']))
+  cnt_hyp <- c(cnt_hyp,mean(data_all[ind,'species_count']))
+}
+mn_occ_mes <- c()
+mn_hyp_mes <- c()
+cnt_mes <- c()
+for (sk in 1:length(tax_SF1_mes)){
+  tax_now <- gsub(' ','.',tax_SF1_mes[sk])
+  ind <- which(names(occ_sum)==tax_now)
+  mn_occ_mes <- c(mn_occ_mes,occ_sum[ind])
+  ind <- which(data_occurence[,tax_now]==1)
+  mn_hyp_mes <- c(mn_hyp_mes,mean(data_all[ind,'HYP']))
+  cnt_mes <- c(cnt_mes,mean(data_all[ind,'species_count']))
+}
+
