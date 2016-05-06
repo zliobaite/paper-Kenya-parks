@@ -19,6 +19,10 @@ plot_name_wetlands <- 'results/figure_wetlands.pdf'
 plot_name_wetlands2 <- 'results/figure_wetlands2.pdf'
 plot_name_wetlands3 <- 'results/figure_wetlands3.pdf'
 
+plot_name_forests <- 'results/figure_forests.pdf'
+plot_name_forests2 <- 'results/figure_forests2.pdf'
+plot_name_forests3 <- 'results/figure_forests3.pdf'
+
 fet_extract <- c('HYP','HOD','AL','OL','SF','OT','CM') #features to extract
 fet_mass <- 'MASS_KG' #feature for mass
 
@@ -218,6 +222,29 @@ for (sk in 1:length(tax_SF1_mes)){
   cnt_mes <- c(cnt_mes,mean(data_all[ind,'species_count']))
 }
 
+
+plot_box <- function(data_wet,sp_names,fet_teeth){
+  par(mfrow = c(length(fet_teeth), (length(sp_names)+1)),mai = c(0.4, 0.55, 0.3, 0.01))
+  for (sk in 1:length(fet_teeth)){
+    fet_now <- fet_teeth[sk]
+    lmts <- range(data_wet[,fet_now])
+    for (sk2 in 1:length(sp_names)){
+      fml <- as.formula(paste(fet_now,'~',sp_names[sk2],sep=''))
+      if (sk2==1){
+        boxplot(fml,data=data_wet, main=sp_names[sk2],ylim=lmts, ylab = fet_now,names = c('present','absent'),col = c(col1,col2))  
+      }else{
+        boxplot(fml,data=data_wet, main=sp_names[sk2],ylim=lmts,names = c('present','absent'),col = c(col1,col2))
+      }
+      mn <- aggregate(fml,data=data_wet,mean)
+      points(1:2, mn[,fet_now], col = "black",pch='-')
+    }
+    boxplot(data_wet[,fet_now],data=data_wet, main="All sites",ylim=lmts,col = col3)
+    points(1, mean(data_wet[,fet_now]), col = "black",pch='-')
+  }
+  
+}
+
+
 #hippo occurs or not
 ind_occ_hip <- which(data_occurence[,'Hippopotamus.amphibius']==1)
 ind_not_hip <- which(data_occurence[,'Hippopotamus.amphibius']==0)
@@ -232,178 +259,39 @@ mn_not_red <- apply(data_all[ind_not_red,fet_interest],2,mean)
 mn_all <- rbind(mn,mn_occ_hip,mn_not_hip,mn_occ_red,mn_not_red)
 print(mn_all)
 data_wet <- cbind(abs(data_occurence[,'Hippopotamus.amphibius']-1),abs(data_occurence[,'Redunca.redunca']-1),data_all[,fet_interest])
-colnames(data_wet)[1:2] <- c('Hippo','Redunca')
+sp_names <- c('Hippo','Redunca')
+fet_teeth <- c('HYP','HOD','AL','OL','SF','CM')
+colnames(data_wet)[1:2] <- sp_names
 col1 <- "#e79f00"
 col2 <- "#9ad0f3"
 col3 <- "#009E73"
 pdf(plot_name_wetlands,width = 4.6, height = 11)
-par(mfrow = c(6, 3),mai = c(0.4, 0.55, 0.3, 0.01))
-#HYP
-lmts <- range(data_wet$HYP)
-boxplot(HYP~Hippo,data=data_wet, main="Hippo",ylim=lmts, ylab = 'HYP',names = c('present','absent'),col = c(col1,col2))
-mn <- aggregate(HYP~Hippo,data=data_wet,mean)
-points(1:2, mn$HYP, col = "black",pch='-')
-boxplot(HYP~Redunca,data=data_wet, main="Redunca",ylim=lmts,names = c('present','absent'),col = c(col1,col2))
-mn <- aggregate(HYP~Hippo,data=data_wet,mean)
-points(1:2, mn$HYP, col = "black",pch='-')
-boxplot(data_wet$HYP,data=data_wet, main="All sites",ylim=lmts,col = col3)
-points(1, mean(data_wet$HYP), col = "black",pch='-')
-#HOD
-lmts <- range(data_wet$HOD)
-boxplot(HOD~Hippo,data=data_wet, main="Hippo", ylim=lmts, ylab = 'HOD',names = c('present','absent'),col = c(col1,col2))
-mn <- aggregate(HOD~Hippo,data=data_wet,mean)
-points(1:2, mn$HOD, col = "black",pch='-')
-boxplot(HOD~Redunca,data=data_wet, main="Redunca", ylim=lmts,names = c('present','absent'),col = c(col1,col2))
-mn <- aggregate(HOD~Hippo,data=data_wet,mean)
-points(1:2, mn$HOD, col = "black",pch='-')
-boxplot(data_wet$HOD,data=data_wet, main="All sites",ylim=lmts,col = col3)
-points(1, mean(data_wet$HOD), col = "black",pch='-')
-#AL
-lmts <- range(data_wet$AL)
-boxplot(AL~Hippo,data=data_wet, main="Hippo", ylim=lmts, ylab = 'AL',names = c('present','absent'),col = c(col1,col2))
-mn <- aggregate(AL~Hippo,data=data_wet,mean)
-points(1:2, mn$AL, col = "black",pch='-')
-boxplot(AL~Redunca,data=data_wet, main="Redunca", ylim=lmts,names = c('present','absent'),col = c(col1,col2))
-mn <- aggregate(AL~Hippo,data=data_wet,mean)
-points(1:2, mn$AL, col = "black",pch='-')
-boxplot(data_wet$AL,data=data_wet, main="All sites",ylim=lmts,col = col3)
-points(1, mean(data_wet$AL), col = "black",pch='-')
-#OL
-lmts <- range(data_wet$OL)
-boxplot(OL~Hippo,data=data_wet, main="Hippo", ylim=lmts, ylab = 'OL',names = c('present','absent'),col = c(col1,col2))
-mn <- aggregate(OL~Hippo,data=data_wet,mean)
-points(1:2, mn$OL, col = "black",pch='-')
-boxplot(OL~Redunca,data=data_wet, main="Redunca", ylim=lmts,names = c('present','absent'),col = c(col1,col2))
-mn <- aggregate(OL~Hippo,data=data_wet,mean)
-points(1:2, mn$OL, col = "black",pch='-')
-boxplot(data_wet$OL,data=data_wet, main="All sites",ylim=lmts,col = col3)
-points(1, mean(data_wet$OL), col = "black",pch='-')
-#SF
-lmts <- range(data_wet$SF)
-boxplot(SF~Hippo,data=data_wet, main="Hippo", ylim=lmts, ylab = 'SF',names = c('present','absent'),col = c(col1,col2))
-mn <- aggregate(SF~Hippo,data=data_wet,mean)
-points(1:2, mn$SF, col = "black",pch='-')
-boxplot(SF~Redunca,data=data_wet, main="Redunca", ylim=lmts,names = c('present','absent'),col = c(col1,col2))
-mn <- aggregate(SF~Hippo,data=data_wet,mean)
-points(1:2, mn$SF, col = "black",pch='-')
-boxplot(data_wet$SF,data=data_wet, main="All sites",ylim=lmts,col = col3)
-points(1, mean(data_wet$SF), col = "black",pch='-')
-#CM
-lmts <- range(data_wet$CM)
-boxplot(CM~Hippo,data=data_wet, main="Hippo", ylim=lmts, ylab = 'CM',names = c('present','absent'),col = c(col1,col2))
-mn <- aggregate(CM~Hippo,data=data_wet,mean)
-points(1:2, mn$CM, col = "black",pch='-')
-boxplot(CM~Redunca,data=data_wet, main="Redunca", ylim=lmts,names = c('present','absent'),col = c(col1,col2))
-mn <- aggregate(CM~Hippo,data=data_wet,mean)
-points(1:2, mn$CM, col = "black",pch='-')
-boxplot(data_wet$CM,data=data_wet, main="All sites",ylim=lmts,col = col3)
-points(1, mean(data_wet$CM), col = "black",pch='-')
+plot_box(data_wet,sp_names,fet_teeth)
 dev.off()
 
+fet_env <- c('PREC','NPP','NDVI','TEMP','ELEV','species_count')
 pdf(plot_name_wetlands2,width = 4.6, height = 11)
-par(mfrow = c(6, 3),mai = c(0.4, 0.55, 0.3, 0.01))
-#PREC
-lmts <- range(data_wet$PREC)
-boxplot(PREC~Hippo,data=data_wet, main="Hippo",ylim=lmts, ylab = 'PREC',names = c('present','absent'),col = c(col1,col2))
-mn <- aggregate(PREC~Hippo,data=data_wet,mean)
-points(1:2, mn$PREC, col = "black",pch='-')
-boxplot(PREC~Redunca,data=data_wet, main="Redunca",ylim=lmts,names = c('present','absent'),col = c(col1,col2))
-mn <- aggregate(PREC~Hippo,data=data_wet,mean)
-points(1:2, mn$PREC, col = "black",pch='-')
-boxplot(data_wet$PREC,data=data_wet, main="All sites",ylim=lmts,col = col3)
-points(1, mean(data_wet$PREC), col = "black",pch='-')
-#NPP
-lmts <- range(data_wet$NPP)
-boxplot(NPP~Hippo,data=data_wet, main="Hippo",ylim=lmts, ylab = 'NPP',names = c('present','absent'),col = c(col1,col2))
-mn <- aggregate(NPP~Hippo,data=data_wet,mean)
-points(1:2, mn$NPP, col = "black",pch='-')
-boxplot(NPP~Redunca,data=data_wet, main="Redunca",ylim=lmts,names = c('present','absent'),col = c(col1,col2))
-mn <- aggregate(NPP~Hippo,data=data_wet,mean)
-points(1:2, mn$NPP, col = "black",pch='-')
-boxplot(data_wet$NPP,data=data_wet, main="All sites",ylim=lmts,col = col3)
-points(1, mean(data_wet$NPP), col = "black",pch='-')
-#NDVI
-lmts <- range(data_wet$NDVI)
-boxplot(NDVI~Hippo,data=data_wet, main="Hippo",ylim=lmts, ylab = 'NDVI',names = c('present','absent'),col = c(col1,col2))
-mn <- aggregate(NDVI~Hippo,data=data_wet,mean)
-points(1:2, mn$NDVI, col = "black",pch='-')
-boxplot(NDVI~Redunca,data=data_wet, main="Redunca",ylim=lmts,names = c('present','absent'),col = c(col1,col2))
-mn <- aggregate(NDVI~Hippo,data=data_wet,mean)
-points(1:2, mn$NDVI, col = "black",pch='-')
-boxplot(data_wet$NDVI,data=data_wet, main="All sites",ylim=lmts,col = col3)
-points(1, mean(data_wet$NDVI), col = "black",pch='-')
-#TEMP
-lmts <- range(data_wet$TEMP)
-boxplot(TEMP~Hippo,data=data_wet, main="Hippo",ylim=lmts, ylab = 'TEMP',names = c('present','absent'),col = c(col1,col2))
-mn <- aggregate(TEMP~Hippo,data=data_wet,mean)
-points(1:2, mn$TEMP, col = "black",pch='-')
-boxplot(TEMP~Redunca,data=data_wet, main="Redunca",ylim=lmts,names = c('present','absent'),col = c(col1,col2))
-mn <- aggregate(TEMP~Hippo,data=data_wet,mean)
-points(1:2, mn$TEMP, col = "black",pch='-')
-boxplot(data_wet$TEMP,data=data_wet, main="All sites",ylim=lmts,col = col3)
-points(1, mean(data_wet$TEMP), col = "black",pch='-')
-#ELEV
-lmts <- range(data_wet$ELEV)
-boxplot(ELEV~Hippo,data=data_wet, main="Hippo",ylim=lmts, ylab = 'ELEV',names = c('present','absent'),col = c(col1,col2))
-mn <- aggregate(ELEV~Hippo,data=data_wet,mean)
-points(1:2, mn$ELEV, col = "black",pch='-')
-boxplot(ELEV~Redunca,data=data_wet, main="Redunca",ylim=lmts,names = c('present','absent'),col = c(col1,col2))
-mn <- aggregate(ELEV~Hippo,data=data_wet,mean)
-points(1:2, mn$ELEV, col = "black",pch='-')
-boxplot(data_wet$ELEV,data=data_wet, main="All sites",ylim=lmts,col = col3)
-points(1, mean(data_wet$ELEV), col = "black",pch='-')
-#species_count
-lmts <- range(data_wet$species_count)
-boxplot(species_count~Hippo,data=data_wet, main="Hippo",ylim=lmts, ylab = 'species_count',names = c('present','absent'),col = c(col1,col2))
-mn <- aggregate(species_count~Hippo,data=data_wet,mean)
-points(1:2, mn$species_count, col = "black",pch='-')
-boxplot(species_count~Redunca,data=data_wet, main="Redunca",ylim=lmts,names = c('present','absent'),col = c(col1,col2))
-mn <- aggregate(species_count~Hippo,data=data_wet,mean)
-points(1:2, mn$species_count, col = "black",pch='-')
-boxplot(data_wet$species_count,data=data_wet, main="All sites",ylim=lmts,col = col3)
-points(1, mean(data_wet$species_count), col = "black",pch='-')
+plot_box(data_wet,sp_names,fet_env)
 dev.off()
 
+fet_env_min <- c('PREC_low','NPP_low_low','NDVI_low_MIN','TEMP_high')
 pdf(plot_name_wetlands3,width = 4.6, height = 7.5)
-par(mfrow = c(4, 3),mai = c(0.4, 0.55, 0.3, 0.01))
-#PREC_low
-lmts <- range(data_wet$PREC_low)
-boxplot(PREC_low~Hippo,data=data_wet, main="Hippo",ylim=lmts, ylab = 'PREC_low (spatial)',names = c('present','absent'),col = c(col1,col2))
-mn <- aggregate(PREC_low~Hippo,data=data_wet,mean)
-points(1:2, mn$PREC_low, col = "black",pch='-')
-boxplot(PREC_low~Redunca,data=data_wet, main="Redunca",ylim=lmts,names = c('present','absent'),col = c(col1,col2))
-mn <- aggregate(PREC_low~Hippo,data=data_wet,mean)
-points(1:2, mn$PREC_low, col = "black",pch='-')
-boxplot(data_wet$PREC_low,data=data_wet, main="All sites",ylim=lmts,col = col3)
-points(1, mean(data_wet$PREC_low), col = "black",pch='-')
-#NPP_low_low
-lmts <- range(data_wet$NPP_low_low)
-boxplot(NPP_low_low~Hippo,data=data_wet, main="Hippo",ylim=lmts, ylab = 'NPP_low_low',names = c('present','absent'),col = c(col1,col2))
-mn <- aggregate(NPP_low_low~Hippo,data=data_wet,mean)
-points(1:2, mn$NPP_low_low, col = "black",pch='-')
-boxplot(NPP_low_low~Redunca,data=data_wet, main="Redunca",ylim=lmts,names = c('present','absent'),col = c(col1,col2))
-mn <- aggregate(NPP_low_low~Hippo,data=data_wet,mean)
-points(1:2, mn$NPP_low_low, col = "black",pch='-')
-boxplot(data_wet$NPP_low_low,data=data_wet, main="All sites",ylim=lmts,col = col3)
-points(1, mean(data_wet$NPP_low_low), col = "black",pch='-')
-#NDVI_low_MIN
-lmts <- range(data_wet$NDVI_low_MIN)
-boxplot(NDVI_low_MIN~Hippo,data=data_wet, main="Hippo",ylim=lmts, ylab = 'NDVI_low_MIN',names = c('present','absent'),col = c(col1,col2))
-mn <- aggregate(NDVI_low_MIN~Hippo,data=data_wet,mean)
-points(1:2, mn$NDVI_low_MIN, col = "black",pch='-')
-boxplot(NDVI_low_MIN~Redunca,data=data_wet, main="Redunca",ylim=lmts,names = c('present','absent'),col = c(col1,col2))
-mn <- aggregate(NDVI_low_MIN~Hippo,data=data_wet,mean)
-points(1:2, mn$NDVI_low_MIN, col = "black",pch='-')
-boxplot(data_wet$NDVI_low_MIN,data=data_wet, main="All sites",ylim=lmts,col = col3)
-points(1, mean(data_wet$NDVI_low_MIN), col = "black",pch='-')
-#TEMP_high
-lmts <- range(data_wet$TEMP_high)
-boxplot(TEMP_high~Hippo,data=data_wet, main="Hippo",ylim=lmts, ylab = 'TEMP_high',names = c('present','absent'),col = c(col1,col2))
-mn <- aggregate(TEMP_high~Hippo,data=data_wet,mean)
-points(1:2, mn$TEMP_high, col = "black",pch='-')
-boxplot(TEMP_high~Redunca,data=data_wet, main="Redunca",ylim=lmts,names = c('present','absent'),col = c(col1,col2))
-mn <- aggregate(TEMP_high~Hippo,data=data_wet,mean)
-points(1:2, mn$TEMP_high, col = "black",pch='-')
-boxplot(data_wet$TEMP_high,data=data_wet, main="All sites",ylim=lmts,col = col3)
-points(1, mean(data_wet$TEMP_high), col = "black",pch='-')
+plot_box(data_wet,sp_names,fet_env_min)
 dev.off()
+
+data_forest <- cbind(abs(data_occurence[,'Hylochoerus.meinertzhageni']-1),abs(data_occurence[,'Galago.senegalensis']-1),abs(data_occurence[,'Tragelaphus.imberbis']-1),data_all[,fet_interest])
+sp_names <- c('Hylochoerus','Galago','Tragelaphus')
+colnames(data_forest)[1:3] <- sp_names
+
+pdf(plot_name_forests,width = 6, height = 11)
+plot_box(data_forest,sp_names,fet_teeth)
+dev.off()
+
+pdf(plot_name_forests2,width = 6, height = 11)
+plot_box(data_forest,sp_names,fet_env)
+dev.off()
+
+pdf(plot_name_forests3,width = 6, height = 7.5)
+plot_box(data_forest,sp_names,fet_env_min)
+dev.off()
+
