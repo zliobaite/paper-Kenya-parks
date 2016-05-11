@@ -241,9 +241,7 @@ plot_box <- function(data_wet,sp_names,fet_teeth){
     boxplot(data_wet[,fet_now],data=data_wet, main="All sites",ylim=lmts,col = col3)
     points(1, mean(data_wet[,fet_now]), col = "black",pch='-')
   }
-  
 }
-
 
 #hippo occurs or not
 ind_occ_hip <- which(data_occurence[,'Hippopotamus.amphibius']==1)
@@ -283,15 +281,14 @@ data_forest <- cbind(abs(data_occurence[,'Hylochoerus.meinertzhageni']-1),abs(da
 sp_names <- c('Hylochoerus','Galago','Tragelaphus')
 colnames(data_forest)[1:3] <- sp_names
 
-pdf(plot_name_forests,width = 6, height = 11)
+pdf(plot_name_forests,width = 6.1, height = 11)
 plot_box(data_forest,sp_names,fet_teeth)
 dev.off()
 
-pdf(plot_name_forests2,width = 6, height = 11)
+pdf(plot_name_forests2,width = 6.1, height = 11)
 plot_box(data_forest,sp_names,fet_env)
 dev.off()
 
-pdf(plot_name_forests3,width = 6, height = 7.5)
+pdf(plot_name_forests3,width = 6.1, height = 7.5)
 plot_box(data_forest,sp_names,fet_env_min)
 dev.off()
-
