@@ -68,7 +68,7 @@ colnames(cor_all)[1:(length(fet_inputs)-2)] <- process_feature_names(colnames(co
 
 pdf(plot_name_fig1,width = 8, height = 9)
 #png(plot_name_fig1_png,width = 2400,height = 1000, res = 180)
-corrplot(as.matrix(cor_all),method="square",addCoef.col="black", addCoefasPercent = TRUE,cl.pos = "n")
+corrplot(as.matrix(cor_all),method="square",addCoef.col="black", addCoefasPercent = TRUE,cl.pos = "n",col=colorRampPalette(c("darkorange","white","steelblue"))(200))
 dev.off()
 
 #correlations occurence
@@ -87,5 +87,5 @@ colnames(cor_all) <- fet_targets
 
 pdf(plot_name_figA2,width = 7,height = 25)
 #png(plot_name_cor,width = 100, res = 100)
-corrplot(as.matrix(cor_all),method="square",addCoef.col="black", addCoefasPercent = TRUE,cl.pos = "n")
+corrplot(as.matrix(cor_all),method="square",addCoef.col="black", addCoefasPercent = TRUE,cl.pos = "n",col=colorRampPalette(c("darkorange","white","steelblue"))(200))
 dev.off()

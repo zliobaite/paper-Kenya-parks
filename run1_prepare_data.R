@@ -165,12 +165,12 @@ rownames(cor_sites) <- paste('mean(',rownames(cor_sites),')',sep='')
 
 pdf(plot_name_cor1,width = 3.4,height = 3.4)
 #png(plot_name_cor,width = 100, res = 100)
-corrplot(as.matrix(cor_traits),method="square",addCoef.col="black", addCoefasPercent = TRUE,cl.pos = "n")
+corrplot(as.matrix(cor_traits),method="square",addCoef.col="black", addCoefasPercent = TRUE,cl.pos = "n",col=colorRampPalette(c("darkorange","white","steelblue"))(200))
 dev.off()
 
 pdf(plot_name_cor2,width = 4,height = 4)
 #png(plot_name_cor,width = 100, res = 100)
-corrplot(as.matrix(cor_sites),method="square",addCoef.col="black", addCoefasPercent = TRUE,cl.pos = "n")
+corrplot(as.matrix(cor_sites),method="square",addCoef.col="black", addCoefasPercent = TRUE,cl.pos = "n",col=colorRampPalette(c("darkorange","white","steelblue"))(200))
 dev.off()
 
 #make Table SF=2
