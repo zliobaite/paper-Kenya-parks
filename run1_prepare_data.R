@@ -14,14 +14,22 @@ output_file_tableSF2 <- 'results/tableSF2.txt'
 
 plot_name_cor1 <- 'results/figure1a.pdf'
 plot_name_cor2 <- 'results/figure1b.pdf'
-
+plot_name_cor1_png <- 'results/figure1a.png'
+plot_name_cor2_png <- 'results/figure1b.png'
+  
 plot_name_wetlands <- 'results/figure_wetlands.pdf'
 plot_name_wetlands2 <- 'results/figure_wetlands2.pdf'
 plot_name_wetlands3 <- 'results/figure_wetlands3.pdf'
+plot_name_wetlands_png <- 'results/figure_wetlands.png'
+plot_name_wetlands2_png <- 'results/figure_wetlands2.png'
+
 
 plot_name_forests <- 'results/figure_forests.pdf'
 plot_name_forests2 <- 'results/figure_forests2.pdf'
 plot_name_forests3 <- 'results/figure_forests3.pdf'
+plot_name_forests_png <- 'results/figure_forests.png'
+plot_name_forests2_png <- 'results/figure_forests2.png'
+
 
 fet_extract <- c('HYP','HOD','AL','OL','SF','OT','CM') #features to extract
 fet_mass <- 'MASS_KG' #feature for mass
@@ -164,14 +172,21 @@ colnames(cor_sites) <- paste('mean(',colnames(cor_sites),')',sep='')
 rownames(cor_sites) <- paste('mean(',rownames(cor_sites),')',sep='')
 
 pdf(plot_name_cor1,width = 3.4,height = 3.4)
-#png(plot_name_cor,width = 100, res = 100)
+corrplot(as.matrix(cor_traits),method="square",addCoef.col="black", addCoefasPercent = TRUE,cl.pos = "n",col=colorRampPalette(c("darkorange","white","steelblue"))(200))
+dev.off()
+
+png(plot_name_cor1_png, width = 3.4,height = 3.4, units = 'in', res = 1200)
 corrplot(as.matrix(cor_traits),method="square",addCoef.col="black", addCoefasPercent = TRUE,cl.pos = "n",col=colorRampPalette(c("darkorange","white","steelblue"))(200))
 dev.off()
 
 pdf(plot_name_cor2,width = 4,height = 4)
-#png(plot_name_cor,width = 100, res = 100)
 corrplot(as.matrix(cor_sites),method="square",addCoef.col="black", addCoefasPercent = TRUE,cl.pos = "n",col=colorRampPalette(c("darkorange","white","steelblue"))(200))
 dev.off()
+
+png(plot_name_cor2_png,width = 4,height = 4, units = 'in', res = 1200)
+corrplot(as.matrix(cor_sites),method="square",addCoef.col="black", addCoefasPercent = TRUE,cl.pos = "n",col=colorRampPalette(c("darkorange","white","steelblue"))(200))
+dev.off()
+
 
 #make Table SF=2
 ind_spec_SF2 <- which(data_traits[,'SF']==1)
@@ -266,11 +281,19 @@ col3 <- "#009E73"
 pdf(plot_name_wetlands,width = 4.6, height = 11)
 plot_box(data_wet,sp_names,fet_teeth)
 dev.off()
+png(plot_name_wetlands_png,width = 4.6, height = 11, units = 'in', res = 1200)
+plot_box(data_wet,sp_names,fet_teeth)
+dev.off()
+
 
 fet_env <- c('PREC','NPP','NDVI','TEMP','ELEV','species_count')
 pdf(plot_name_wetlands2,width = 4.6, height = 11)
 plot_box(data_wet,sp_names,fet_env)
 dev.off()
+png(plot_name_wetlands2_png,width = 4.6, height = 11, units = 'in', res = 1200)
+plot_box(data_wet,sp_names,fet_env)
+dev.off()
+
 
 fet_env_min <- c('PREC_low','NPP_low_low','NDVI_low_MIN','TEMP_high')
 pdf(plot_name_wetlands3,width = 4.6, height = 7.5)
@@ -284,10 +307,17 @@ colnames(data_forest)[1:3] <- sp_names
 pdf(plot_name_forests,width = 6.1, height = 11)
 plot_box(data_forest,sp_names,fet_teeth)
 dev.off()
+png(plot_name_forests_png,width = 6.1, height = 11, units = 'in', res = 1200)
+plot_box(data_forest,sp_names,fet_teeth)
+dev.off()
 
 pdf(plot_name_forests2,width = 6.1, height = 11)
 plot_box(data_forest,sp_names,fet_env)
 dev.off()
+png(plot_name_forests2_png,width = 6.1, height = 11, units = 'in', res = 1200)
+plot_box(data_forest,sp_names,fet_env)
+dev.off()
+
 
 pdf(plot_name_forests3,width = 6.1, height = 7.5)
 plot_box(data_forest,sp_names,fet_env_min)

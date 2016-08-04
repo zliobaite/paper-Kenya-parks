@@ -8,7 +8,7 @@ input_file_name <- 'working_data/data_all.csv'
 input_file2 <- 'input_data/data_occurence.csv'
 
 plot_name_fig1 <- 'results/figure2.pdf'
-#plot_name_fig1_png <- 'results/figure1.png'
+plot_name_fig1_png <- 'results/figure2.png'
 plot_name_figA2 <- 'results/figureA2.pdf'
 
 fet_targets <- c('ELEV','TEMP','TEMP_MIN','TEMP_low','TEMP_low_MIN','TEMP_MAX','TEMP_high','TEMP_high_MAX','PREC','PREC_MIN','PREC_low','PREC_MAX','PREC_high','NPP','NPP_MIN_MIN','NPP_low_low','NPP_low_MIN','NPP_MIN_low','NDVI','NDVI_MIN9y','NDVI_low1y','NDVI_low1y_MIN','NDVI_low','NDVI_low_MIN','species_count')
@@ -67,9 +67,13 @@ process_feature_names <- function(Feature)
 colnames(cor_all)[1:(length(fet_inputs)-2)] <- process_feature_names(colnames(cor_all)[1:(length(fet_inputs)-2)])
 
 pdf(plot_name_fig1,width = 8, height = 9)
-#png(plot_name_fig1_png,width = 2400,height = 1000, res = 180)
 corrplot(as.matrix(cor_all),method="square",addCoef.col="black", addCoefasPercent = TRUE,cl.pos = "n",col=colorRampPalette(c("darkorange","white","steelblue"))(200))
 dev.off()
+
+png(plot_name_fig1_png,width = 8, height = 9, units = 'in', res = 1200)
+corrplot(as.matrix(cor_all),method="square",addCoef.col="black", addCoefasPercent = TRUE,cl.pos = "n",col=colorRampPalette(c("darkorange","white","steelblue"))(200))
+dev.off()
+
 
 #correlations occurence
 
