@@ -66,6 +66,7 @@ process_feature_names <- function(Feature)
 
 colnames(cor_all)[1:(length(fet_inputs)-2)] <- process_feature_names(colnames(cor_all)[1:(length(fet_inputs)-2)])
 
+cor_all <- t(cor_all)
 pdf(plot_name_fig1,width = 8, height = 9)
 corrplot(as.matrix(cor_all),method="square",addCoef.col="black", addCoefasPercent = TRUE,cl.pos = "n",col=colorRampPalette(c("darkorange","white","steelblue"))(200))
 dev.off()

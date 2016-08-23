@@ -171,19 +171,23 @@ cor_sites <- round(cor(data_all[,fet_cor]),digits=2)
 colnames(cor_sites) <- paste('mean(',colnames(cor_sites),')',sep='')
 rownames(cor_sites) <- paste('mean(',rownames(cor_sites),')',sep='')
 
-pdf(plot_name_cor1,width = 3.4,height = 3.4)
+vvv <- 2.8
+vv2 <- 3.3
+mul <- 0.85
+
+pdf(plot_name_cor1,width = vvv,height = vvv*mul)
 corrplot(as.matrix(cor_traits),method="square",addCoef.col="black", addCoefasPercent = TRUE,cl.pos = "n",col=colorRampPalette(c("darkorange","white","steelblue"))(200))
 dev.off()
 
-png(plot_name_cor1_png, width = 3.4,height = 3.4, units = 'in', res = 1200)
+png(plot_name_cor1_png, width = vvv,height = vvv*mul, units = 'in', res = 1200)
 corrplot(as.matrix(cor_traits),method="square",addCoef.col="black", addCoefasPercent = TRUE,cl.pos = "n",col=colorRampPalette(c("darkorange","white","steelblue"))(200))
 dev.off()
 
-pdf(plot_name_cor2,width = 4,height = 4)
+pdf(plot_name_cor2,width = vv2,height = vv2*mul)
 corrplot(as.matrix(cor_sites),method="square",addCoef.col="black", addCoefasPercent = TRUE,cl.pos = "n",col=colorRampPalette(c("darkorange","white","steelblue"))(200))
 dev.off()
 
-png(plot_name_cor2_png,width = 4,height = 4, units = 'in', res = 1200)
+png(plot_name_cor2_png,width = vv2,height = vv2*mul, units = 'in', res = 1200)
 corrplot(as.matrix(cor_sites),method="square",addCoef.col="black", addCoefasPercent = TRUE,cl.pos = "n",col=colorRampPalette(c("darkorange","white","steelblue"))(200))
 dev.off()
 
