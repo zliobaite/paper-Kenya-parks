@@ -168,10 +168,13 @@ library(corrplot)
 fet_cor <- c('HYP','HOD','AL','OL','SF','OT','CM')
 cor_traits <- round(cor(data_traits[,fet_cor]),digits = 2)
 cor_sites <- round(cor(data_all[,fet_cor]),digits=2)
-colnames(cor_sites) <- paste('mean(',colnames(cor_sites),')',sep='')
-rownames(cor_sites) <- paste('mean(',rownames(cor_sites),')',sep='')
+#colnames(cor_sites) <- paste('mean(',colnames(cor_sites),')',sep='')
+#rownames(cor_sites) <- paste('mean(',rownames(cor_sites),')',sep='')
+colnames(cor_sites) <- paste('m(',colnames(cor_sites),')',sep='')
+rownames(cor_sites) <- paste('m(',rownames(cor_sites),')',sep='')
 
-vvv <- 2.8
+
+vvv <- 3.0
 vv2 <- 3.3
 mul <- 0.85
 

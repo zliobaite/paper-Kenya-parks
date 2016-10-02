@@ -49,11 +49,13 @@ process_feature_names <- function(Feature)
   {
     if (grepl('=',Feature[sk]))
     {
-      Feature[sk] <- paste('prop(',Feature[sk],')',sep='')
+      #Feature[sk] <- paste('prop(',Feature[sk],')',sep='')
+      Feature[sk] <- paste('p(',Feature[sk],')',sep='')
     }
     else
     {
-      Feature[sk] <- paste('mean(',Feature[sk],')',sep='')
+      #Feature[sk] <- paste('mean(',Feature[sk],')',sep='')
+      Feature[sk] <- paste('m(',Feature[sk],')',sep='')
     }
     if (grepl('med',Feature[sk]))
     {
